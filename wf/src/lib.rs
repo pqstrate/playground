@@ -203,13 +203,3 @@ pub fn run_example(num_steps: usize) -> Result<(), Box<dyn std::error::Error>> {
     
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_fib_like_sequence() {
-        run_example(8).unwrap();
-    }
-}

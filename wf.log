@@ -1,0 +1,463 @@
+Fibonacci-like Sequence STARK Proof Demo
+Sequence rule: x_{n+1} = x_n^8 + x_{n-1}
+Starting with x1 = 1, x2 = 1
+
+Number of steps: 16
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 16 steps
+Final result: 64041559093901781196925179525633504398
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................9.688µs
+··Start:   Step 1: Commit to execution trace
+trace length: 16
+lde domain size: 128
+····End:     Step 1: Commit to execution trace .....................................61.335µs
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................49.412µs
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................60.053µs
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................16.151µs
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................6.783µs
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................10.600µs
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................3.346µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................23.224µs
+··End:     Total proof generation ..................................................297.817µs
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 32
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 32 steps
+Final result: 220167204291088027532930503705658820943
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.393µs
+··Start:   Step 1: Commit to execution trace
+trace length: 32
+lde domain size: 256
+····End:     Step 1: Commit to execution trace .....................................83.365µs
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................67.897µs
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................114.403µs
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................15.880µs
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................12.533µs
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................18.494µs
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................2.485µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................20.168µs
+··End:     Total proof generation ..................................................387.974µs
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 64
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 64 steps
+Final result: 320150059998881860673757434858671595851
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.513µs
+··Start:   Step 1: Commit to execution trace
+trace length: 64
+lde domain size: 512
+····End:     Step 1: Commit to execution trace .....................................162.974µs
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................129.061µs
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................243.555µs
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................26.900µs
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................23.474µs
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................45.014µs
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................2.645µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................25.537µs
+··End:     Total proof generation ..................................................717.440µs
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 128
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 128 steps
+Final result: 199038443947271587717024337960620411768
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.362µs
+··Start:   Step 1: Commit to execution trace
+trace length: 128
+lde domain size: 1024
+····End:     Step 1: Commit to execution trace .....................................321.140µs
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................243.374µs
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................497.098µs
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................39.363µs
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................53.530µs
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................80.911µs
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................2.535µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................40.505µs
+··End:     Total proof generation ..................................................1.333ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 256
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 256 steps
+Final result: 240509066242247350180883051122335938863
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.382µs
+··Start:   Step 1: Commit to execution trace
+trace length: 256
+lde domain size: 2048
+····End:     Step 1: Commit to execution trace .....................................714.404µs
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................477.842µs
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................1.067ms
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................85.340µs
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................119.974µs
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................211.836µs
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................2.815µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................57.587µs
+··End:     Total proof generation ..................................................2.811ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 512
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 512 steps
+Final result: 12964480692437222851386608591112239732
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.383µs
+··Start:   Step 1: Commit to execution trace
+trace length: 512
+lde domain size: 4096
+····End:     Step 1: Commit to execution trace .....................................1.603ms
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................966.996µs
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................2.204ms
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................137.317µs
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................162.223µs
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................341.928µs
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................2.624µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................65.793µs
+··End:     Total proof generation ..................................................5.540ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 1024
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 1024 steps
+Final result: 195494768349424382056135779957916402529
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.353µs
+··Start:   Step 1: Commit to execution trace
+trace length: 1024
+lde domain size: 8192
+····End:     Step 1: Commit to execution trace .....................................3.358ms
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................1.890ms
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................4.652ms
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................269.183µs
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................344.563µs
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................689.227µs
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................2.655µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................98.304µs
+··End:     Total proof generation ..................................................11.360ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 2048
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 2048 steps
+Final result: 198926244025665073712193050802972238531
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.423µs
+··Start:   Step 1: Commit to execution trace
+trace length: 2048
+lde domain size: 16384
+····End:     Step 1: Commit to execution trace .....................................7.109ms
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................4.108ms
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................9.648ms
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................530.371µs
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................731.005µs
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................1.374ms
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................2.485µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................173.775µs
+··End:     Total proof generation ..................................................23.756ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 4096
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 4096 steps
+Final result: 327469118882245679613897353530400940906
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.132µs
+··Start:   Step 1: Commit to execution trace
+trace length: 4096
+lde domain size: 32768
+····End:     Step 1: Commit to execution trace .....................................15.150ms
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................7.321ms
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................20.303ms
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................1.080ms
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................1.562ms
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................2.607ms
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................2.605µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................264.254µs
+··End:     Total proof generation ..................................................48.347ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 8192
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 8192 steps
+Final result: 15836859170689741673248544836838486120
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.132µs
+··Start:   Step 1: Commit to execution trace
+trace length: 8192
+lde domain size: 65536
+····End:     Step 1: Commit to execution trace .....................................32.583ms
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................15.196ms
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................44.109ms
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................2.093ms
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................3.319ms
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................5.446ms
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................3.447µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................525.031µs
+··End:     Total proof generation ..................................................103.360ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 16384
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 16384 steps
+Final result: 23167645631567578267280286146282906912
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................6.262µs
+··Start:   Step 1: Commit to execution trace
+trace length: 16384
+lde domain size: 131072
+····End:     Step 1: Commit to execution trace .....................................68.646ms
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................29.828ms
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................89.826ms
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................4.213ms
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................7.371ms
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................10.348ms
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................3.787µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................935.687µs
+··End:     Total proof generation ..................................................211.274ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 32768
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 32768 steps
+Final result: 193435672933432610220163501852800178629
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.213µs
+··Start:   Step 1: Commit to execution trace
+trace length: 32768
+lde domain size: 262144
+····End:     Step 1: Commit to execution trace .....................................147.822ms
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................49.781ms
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................161.635ms
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................7.102ms
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................13.980ms
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................17.950ms
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................3.757µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................1.466ms
+··End:     Total proof generation ..................................................399.877ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 65536
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 65536 steps
+Final result: 314618177613670039827242824778984178399
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.112µs
+··Start:   Step 1: Commit to execution trace
+trace length: 65536
+lde domain size: 524288
+····End:     Step 1: Commit to execution trace .....................................287.536ms
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................106.953ms
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................349.019ms
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................14.182ms
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................27.376ms
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................35.499ms
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................4.028µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................3.953ms
+··End:     Total proof generation ..................................................824.662ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 131072
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 131072 steps
+Final result: 104845755137133755191681647321564446376
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.282µs
+··Start:   Step 1: Commit to execution trace
+trace length: 131072
+lde domain size: 1048576
+····End:     Step 1: Commit to execution trace .....................................604.668ms
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................218.621ms
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................753.076ms
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................29.914ms
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................67.455ms
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................72.163ms
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................3.557µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................10.154ms
+··End:     Total proof generation ..................................................1.756s
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 262144
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 262144 steps
+Final result: 1155162518156302742607177223642196368
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.313µs
+··Start:   Step 1: Commit to execution trace
+trace length: 262144
+lde domain size: 2097152
+····End:     Step 1: Commit to execution trace .....................................1.270s
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................470.327ms
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................1.597s
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................59.102ms
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................146.295ms
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................146.954ms
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................3.627µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................17.499ms
+··End:     Total proof generation ..................................................3.707s
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 524288
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 524288 steps
+Final result: 255906072781031681879762273424905402174
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................1.463µs
+··Start:   Step 1: Commit to execution trace
+trace length: 524288
+lde domain size: 4194304
+····End:     Step 1: Commit to execution trace .....................................2.737s
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................921.803ms
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................3.381s
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................118.830ms
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................307.821ms
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................307.506ms
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................3.457µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................39.767ms
+··End:     Total proof generation ..................................................7.815s
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 1048576
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 1048576 steps
+Final result: 176465599126515020014602295855000872849
+Start:   Total proof generation
+··Start:   Step 0: AIR and channel setup
+····End:     Step 0: AIR and channel setup .........................................2.274µs
+··Start:   Step 1: Commit to execution trace
+trace length: 1048576
+lde domain size: 8388608
+····End:     Step 1: Commit to execution trace .....................................5.703s
+··Start:   Step 2: Evaluate constraints
+····End:     Step 2: Evaluate constraints ..........................................1.887s
+··Start:   Step 3: Commit to constraint evaluations
+····End:     Step 3: Commit to constraint evaluations ..............................7.055s
+··Start:   Step 4: Build DEEP composition polynomial
+····End:     Step 4: Build DEEP composition polynomial .............................239.616ms
+··Start:   Step 5: Evaluate DEEP composition polynomial
+····End:     Step 5: Evaluate DEEP composition polynomial ..........................670.385ms
+··Start:   Step 6: Compute FRI layers
+····End:     Step 6: Compute FRI layers ............................................603.080ms
+··Start:   Step 7: Determine query positions
+····End:     Step 7: Determine query positions .....................................6.543µs
+··Start:   Step 8: Build proof object
+····End:     Step 8: Build proof object ............................................83.932ms
+··End:     Total proof generation ..................................................16.243s
+Proof generated successfully!
+Proof verified successfully!
