@@ -2,4 +2,13 @@
 members = [
     "p3", 
     "wf"
-    ]
+]
+
+[workspace.dependencies]
+winterfell = { version = "0.13.0", default-features = false, features = ["std"] }
+core-utils = { version = "0.13", package = "winter-utils", default-features = false, features = ["std"] }
+tracing = { version = "0.1", default-features = false, features = ["std"] }
+
+[patch.crates-io]
+winterfell = { path = "../winterfell/winterfell" }
+winter-utils = { path = "../winterfell/utils/core" }
