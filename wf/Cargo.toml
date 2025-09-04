@@ -1,6 +1,13 @@
 [package]
 name = "wf"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+
+[[bin]]
+name = "wf_demo"
+path = "src/main.rs"
 
 [dependencies]
+winterfell = { path = "../../winterfell/winterfell", default-features = false, features = ["std"] }
+core-utils = { version = "0.13", path = "../../winterfell/utils/core", package = "winter-utils", default-features = false, features = ["std"] }
+tracing = { version = "0.1", default-features = false, features = ["std"] }
