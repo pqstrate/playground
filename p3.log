@@ -7,8 +7,8 @@ Generating proof for Fibonacci-like sequence (x1^8 + x2) with 256 steps
 Final result: 1235288229
 Start:   Total proof generation
 ··Start:   Step 0: Instance setup
-····End:     Step 0: Instance setup ................................................11.852µs
+····End:     Step 0: Instance setup ................................................7.403µs
 ··Start:   Step 1: Commit to execution trace
-····End:     Step 1: Commit to execution trace .....................................1.946ms
+····End:     Step 1: Commit to execution trace .....................................1.761ms
 ··Start:   Step 2: Compute quotient polynomial
 Trace domain: 256, Quotient domain: 2048

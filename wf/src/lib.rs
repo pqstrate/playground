@@ -1,13 +1,14 @@
-use winterfell::{
-    Air, AirContext, Assertion, EvaluationFrame, ProofOptions, Prover,
-    TraceInfo, TraceTable, TransitionConstraintDegree, FieldExtension, BatchingMethod,
-    math::{fields::f128::BaseElement, FieldElement},
-    crypto::{DefaultRandomCoin, ElementHasher, MerkleTree},
-    matrix::ColMatrix, AuxRandElements, CompositionPoly, CompositionPolyTrace,
-    ConstraintCompositionCoefficients, DefaultConstraintCommitment, DefaultConstraintEvaluator,
-    DefaultTraceLde, PartitionOptions, StarkDomain, TracePolyTable,
-};
 use std::marker::PhantomData;
+use winterfell::{
+    crypto::{DefaultRandomCoin, ElementHasher, MerkleTree},
+    math::{fields::f128::BaseElement, FieldElement},
+    matrix::ColMatrix,
+    Air, AirContext, Assertion, AuxRandElements, BatchingMethod, CompositionPoly,
+    CompositionPolyTrace, ConstraintCompositionCoefficients, DefaultConstraintCommitment,
+    DefaultConstraintEvaluator, DefaultTraceLde, EvaluationFrame, FieldExtension, PartitionOptions,
+    ProofOptions, Prover, StarkDomain, TraceInfo, TracePolyTable, TraceTable,
+    TransitionConstraintDegree,
+};
 
 const TRACE_WIDTH: usize = 2;
 
@@ -21,7 +22,10 @@ impl Air for FibLikeAir {
     type PublicInputs = BaseElement;
 
     fn new(trace_info: TraceInfo, pub_inputs: Self::BaseField, options: ProofOptions) -> Self {
-        let degrees = vec![TransitionConstraintDegree::new(8), TransitionConstraintDegree::new(1)];
+        let degrees = vec![
+            TransitionConstraintDegree::new(8),
+            TransitionConstraintDegree::new(1),
+        ];
         assert_eq!(TRACE_WIDTH, trace_info.width());
         FibLikeAir {
             context: AirContext::new(trace_info, degrees, 3, options),
@@ -45,11 +49,17 @@ impl Air for FibLikeAir {
         debug_assert_eq!(TRACE_WIDTH, current.len());
         debug_assert_eq!(TRACE_WIDTH, next.len());
 
-        // Constraint: next[0] = current[0]^8 + current[1] 
+        // Constraint: next[0] = current[0]^8 + current[1]
         // Constraint: next[1] = current[0] (shift register)
-        let x1_pow8 = current[0] * current[0] * current[0] * current[0] * 
-                     current[0] * current[0] * current[0] * current[0];
-        
+        let x1_pow8 = current[0]
+            * current[0]
+            * current[0]
+            * current[0]
+            * current[0]
+            * current[0]
+            * current[0]
+            * current[0];
+
         result[0] = next[0] - (x1_pow8 + current[1]);
         result[1] = next[1] - current[0];
     }
@@ -58,7 +68,7 @@ impl Air for FibLikeAir {
         let last_step = self.trace_length() - 1;
         vec![
             Assertion::single(0, 0, BaseElement::new(1)), // x1 starts at 1
-            Assertion::single(1, 0, BaseElement::new(1)), // x2 starts at 1  
+            Assertion::single(1, 0, BaseElement::new(1)), // x2 starts at 1
             Assertion::single(0, last_step, self.result), // final result
         ]
     }
@@ -79,27 +89,27 @@ impl<H: ElementHasher> FibLikeProver<H> {
 
     pub fn build_trace(&self, num_steps: usize) -> TraceTable<BaseElement> {
         assert!(num_steps.is_power_of_two());
-        
+
         let mut x1_col = Vec::with_capacity(num_steps);
         let mut x2_col = Vec::with_capacity(num_steps);
-        
+
         let mut x1 = BaseElement::new(1);
         let mut x2 = BaseElement::new(1);
-        
+
         x1_col.push(x1);
         x2_col.push(x2);
-        
+
         for _ in 1..num_steps {
             let next_x1 = x1.exp(8u64.into()) + x2;
             let next_x2 = x1;
-            
+
             x1_col.push(next_x1);
             x2_col.push(next_x2);
-            
+
             x1 = next_x1;
             x2 = next_x2;
         }
-        
+
         TraceTable::init(vec![x1_col, x2_col])
     }
 }
@@ -167,8 +177,11 @@ where
 }
 
 pub fn run_example(num_steps: usize) -> Result<(), Box<dyn std::error::Error>> {
-    println!("Generating proof for Fibonacci-like sequence (x1^8 + x2) with {} steps", num_steps);
-    
+    println!(
+        "Generating proof for Fibonacci-like sequence (x1^8 + x2) with {} steps",
+        num_steps
+    );
+
     let options = ProofOptions::new(
         28,
         8,
@@ -179,27 +192,31 @@ pub fn run_example(num_steps: usize) -> Result<(), Box<dyn std::error::Error>> {
         BatchingMethod::Linear,
         BatchingMethod::Linear,
     );
-    
-    let prover = FibLikeProver::<winterfell::crypto::hashers::Blake3_256<BaseElement>>::new(options);
-    
+
+    let prover =
+        FibLikeProver::<winterfell::crypto::hashers::Blake3_256<BaseElement>>::new(options);
+
     let trace = prover.build_trace(num_steps);
     let pub_inputs = prover.get_pub_inputs(&trace);
-    
+
     println!("Final result: {}", pub_inputs);
-    
+
     let proof = prover.prove(trace)?;
     println!("Proof generated successfully!");
-    
-    let acceptable_options = winterfell::AcceptableOptions::OptionSet(vec![proof.options().clone()]);
-    
-    match winterfell::verify::<FibLikeAir, winterfell::crypto::hashers::Blake3_256<BaseElement>, DefaultRandomCoin<winterfell::crypto::hashers::Blake3_256<BaseElement>>, MerkleTree<winterfell::crypto::hashers::Blake3_256<BaseElement>>>(
-        proof,
-        pub_inputs,
-        &acceptable_options,
-    ) {
+
+    let acceptable_options =
+        winterfell::AcceptableOptions::OptionSet(vec![proof.options().clone()]);
+
+    match winterfell::verify::<
+        FibLikeAir,
+        winterfell::crypto::hashers::Blake3_256<BaseElement>,
+        DefaultRandomCoin<winterfell::crypto::hashers::Blake3_256<BaseElement>>,
+        MerkleTree<winterfell::crypto::hashers::Blake3_256<BaseElement>>,
+    >(proof, pub_inputs, &acceptable_options)
+    {
         Ok(()) => println!("Proof verified successfully!"),
         Err(e) => println!("Proof verification failed: {:?}", e),
     }
-    
+
     Ok(())
 }
