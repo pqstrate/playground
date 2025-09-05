@@ -11,13 +11,14 @@ tracing = { version = "0.1", default-features = false, features = ["std"] }
 
 # Plonky3 dependencies
 p3-air = { path = "../Plonky3/air" }
-p3-baby-bear = { path = "../Plonky3/baby-bear" }
+p3-goldilocks = { path = "../Plonky3/goldilocks" }
 p3-challenger = { path = "../Plonky3/challenger" }
 p3-commit = { path = "../Plonky3/commit" }
 p3-dft = { path = "../Plonky3/dft" }
 p3-field = { path = "../Plonky3/field" }
 p3-fri = { path = "../Plonky3/fri" }
 p3-interpolation = { path = "../Plonky3/interpolation" }
+p3-keccak = { path = "../Plonky3/keccak" }
 p3-matrix = { path = "../Plonky3/matrix" }
 p3-merkle-tree = { path = "../Plonky3/merkle-tree" }
 p3-poseidon2 = { path = "../Plonky3/poseidon2" }
