@@ -1,36 +1,23 @@
+use ark_std::{end_timer, start_timer};
 use p3_air::{Air, AirBuilder, BaseAir};
-use p3_challenger::{DuplexChallenger, HashChallenger, SerializingChallenger64};
+use p3_challenger::{HashChallenger, SerializingChallenger64};
 use p3_commit::ExtensionMmcs;
 use p3_dft::Radix2DitParallel;
 use p3_field::extension::BinomialExtensionField;
 use p3_field::PrimeCharacteristicRing;
-use p3_fri::{create_benchmark_fri_params, create_test_fri_params, FriParameters, TwoAdicFriPcs};
-use p3_goldilocks::{Goldilocks, Poseidon2Goldilocks};
+use p3_fri::{FriParameters, TwoAdicFriPcs};
+use p3_goldilocks::Goldilocks;
 use p3_keccak::{Keccak256Hash, KeccakF};
 use p3_matrix::{dense::RowMajorMatrix, Matrix};
 use p3_merkle_tree::MerkleTreeMmcs;
-use p3_symmetric::{
-    CompressionFunctionFromHasher, PaddingFreeSponge, SerializingHasher, TruncatedPermutation,
-};
+use p3_symmetric::{CompressionFunctionFromHasher, PaddingFreeSponge, SerializingHasher};
 use p3_uni_stark::{prove, verify, StarkConfig};
-use p3_util::log2_strict_usize;
-use rand::rngs::SmallRng;
-use rand::SeedableRng;
 use tracing::instrument;
 
 const TRACE_WIDTH: usize = 2;
 
 type Val = Goldilocks;
-type Perm = Poseidon2Goldilocks<8>;
-type MyHash = PaddingFreeSponge<Perm, 8, 4, 4>;
-// type MyCompress = TruncatedPermutation<Perm, 2, 4, 8>;
-// type ValMmcs = MerkleTreeMmcs<Val, Val, MyHash, MyCompress, 4>;
 type Challenge = BinomialExtensionField<Val, 2>;
-// type ChallengeMmcs = ExtensionMmcs<Val, Challenge, ValMmcs>;
-// type Challenger = DuplexChallenger<Val, Perm, 8, 4>;
-// type Dft = Radix2DitParallel<Val>;
-// type Pcs = TwoAdicFriPcs<Val, Dft, ValMmcs, ChallengeMmcs>;
-// type MyConfig = StarkConfig<Pcs, Challenge, Challenger>;
 
 pub type ByteHash = Keccak256Hash; // Standard Keccak for byte hashing
 pub type U64Hash = PaddingFreeSponge<KeccakF, 25, 17, 4>; // Keccak optimized for field elements
@@ -72,14 +59,14 @@ impl<AB: AirBuilder> Air<AB> for FibLikeAir {
         let next_x2 = next[1].clone();
 
         // Constraint: next_x1 = x1^8 + x2
-        let x1_pow8 = x1.clone();
-            // * x1.clone()
-            // * x1.clone()
-            // * x1.clone()
-            // * x1.clone()
-            // * x1.clone()
-            // * x1.clone()
-            // * x1.clone();
+        let x1_pow8 = x1.clone()
+            * x1.clone()
+            * x1.clone()
+            * x1.clone()
+            * x1.clone()
+            * x1.clone()
+            * x1.clone()
+            * x1.clone();
         builder
             .when_transition()
             .assert_eq(next_x1, x1_pow8 + x2.clone());
@@ -145,9 +132,9 @@ pub fn run_example(num_steps: usize) -> Result<(), Box<dyn std::error::Error>> {
     let challenge_mmcs = ChallengeMmcs::new(val_mmcs.clone());
     let dft = Dft::default();
 
-     let fri_params = FriParameters {
-        log_blowup: 2,
-        log_final_poly_len: log2_strict_usize(num_steps),
+    let fri_params = FriParameters {
+        log_blowup: 3, 
+        log_final_poly_len: 1,
         num_queries: 100,
         proof_of_work_bits: 1,
         mmcs: challenge_mmcs,
@@ -160,18 +147,52 @@ pub fn run_example(num_steps: usize) -> Result<(), Box<dyn std::error::Error>> {
     let config = MyConfig::new(pcs, challenger);
     let air = FibLikeAir { final_result };
 
+    let timer = start_timer!(|| format!("proving for {} steps", num_steps));
     let proof = prove(&config, &air, trace, &vec![]);
+    end_timer!(timer);
     println!("Proof generated successfully!");
 
-    // match verify(&config, &air, &proof, &vec![]) {
-    //     Ok(()) => {
-    //         println!("Proof verified successfully!");
-    //         Ok(())
-    //     }
-    //     Err(e) => {
-    //         println!("Proof verification failed: {:?}", e);
-    //         Err(format!("Verification failed: {:?}", e).into())
-    //     }
-    // }
-    Ok(())
+    match verify(&config, &air, &proof, &vec![]) {
+        Ok(()) => {
+            println!("Proof verified successfully!");
+            Ok(())
+        }
+        Err(e) => {
+            println!("Proof verification failed: {:?}", e);
+            Err(format!("Verification failed: {:?}", e).into())
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_power8_gate_small() {
+        run_example(16).expect("Small power8 gate test failed");
+    }
+
+    #[test]
+    fn test_power8_gate_medium() {
+        run_example(256).expect("Medium power8 gate test failed");
+    }
+
+    #[test]
+    fn test_trace_generation() {
+        let (trace, final_result) = generate_trace(8);
+        assert_eq!(trace.height(), 8);
+        assert_eq!(trace.width(), 2);
+
+        // Verify first few values manually
+        assert_eq!(trace.get(0, 0), Some(Val::ONE)); // x1[0] = 1
+        assert_eq!(trace.get(0, 1), Some(Val::ONE)); // x2[0] = 1
+
+        // x1[1] should be 1^8 + 1 = 2
+        assert_eq!(trace.get(1, 0), Some(Val::from_u64(2)));
+        // x2[1] should be 1 (previous x1)
+        assert_eq!(trace.get(1, 1), Some(Val::ONE));
+
+        println!("Trace verification passed, final result: {}", final_result);
+    }
 }

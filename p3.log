@@ -2,13 +2,547 @@ Fibonacci-like Sequence STARK Proof Demo (Plonky3)
 Sequence rule: x_{n+1} = x_n^8 + x_{n-1}
 Starting with x1 = 1, x2 = 1
 
-Number of steps: 256
-Generating proof for Fibonacci-like sequence (x1^8 + x2) with 256 steps
-Final result: 1235288229
+Number of steps: 16
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 16 steps
+Trace generated with 16 rows
+Final result: 14278205507534010655
+Trace: 16x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
 Start:   Total proof generation
 ··Start:   Step 0: Instance setup
-····End:     Step 0: Instance setup ................................................7.403µs
+····End:     Step 0: Instance setup ................................................9.638µs
 ··Start:   Step 1: Commit to execution trace
-····End:     Step 1: Commit to execution trace .....................................1.761ms
+····End:     Step 1: Commit to execution trace .....................................63.158µs
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 16, Quotient domain: 128
+····End:     Step 2: Compute quotient polynomial ...................................20.679µs
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................97.513µs
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................521ns
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................49.924µs
+······Start:   proof of work
+········End:     proof of work .....................................................1.022µs
+······Start:   query phase
+········End:     query phase .......................................................130.454µs
+······End:     Produce FRI proof ...................................................200.054µs
+····End:     Step 5: Open polynomials ..............................................244.918µs
+··End:     Total proof generation ..................................................469.718µs
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 32
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 32 steps
+Trace generated with 32 rows
+Final result: 13597333149588366762
+Trace: 32x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.855µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................113.252µs
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 32, Quotient domain: 256
+····End:     Step 2: Compute quotient polynomial ...................................28.082µs
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................170.749µs
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................471ns
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................97.462µs
+······Start:   proof of work
+········End:     proof of work .....................................................922ns
+······Start:   query phase
+········End:     query phase .......................................................114.113µs
+······End:     Produce FRI proof ...................................................229.780µs
+····End:     Step 5: Open polynomials ..............................................291.054µs
+··End:     Total proof generation ..................................................637.291µs
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 64
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 64 steps
+Trace generated with 64 rows
+Final result: 14472333326468479389
+Trace: 64x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................7.604µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................230.561µs
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 64, Quotient domain: 512
+····End:     Step 2: Compute quotient polynomial ...................................64.871µs
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................351.877µs
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................571ns
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................223.808µs
+······Start:   proof of work
+········End:     proof of work .....................................................3.427µs
+······Start:   query phase
+········End:     query phase .......................................................190.236µs
+······End:     Produce FRI proof ...................................................435.294µs
+····End:     Step 5: Open polynomials ..............................................547.173µs
+··End:     Total proof generation ..................................................1.232ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 128
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 128 steps
+Trace generated with 128 rows
+Final result: 7020931708239230018
+Trace: 128x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.164µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................400.248µs
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 128, Quotient domain: 1024
+····End:     Step 2: Compute quotient polynomial ...................................97.131µs
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................677.937µs
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................561ns
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................402.462µs
+······Start:   proof of work
+········End:     proof of work .....................................................1.021µs
+······Start:   query phase
+········End:     query phase .......................................................196.647µs
+······End:     Produce FRI proof ...................................................617.334µs
+····End:     Step 5: Open polynomials ..............................................804.834µs
+··End:     Total proof generation ..................................................2.016ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 256
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 256 steps
+Trace generated with 256 rows
+Final result: 4034163604845645921
+Trace: 256x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.174µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................812.780µs
 ··Start:   Step 2: Compute quotient polynomial
 Trace domain: 256, Quotient domain: 2048
+····End:     Step 2: Compute quotient polynomial ...................................189.725µs
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................1.302ms
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................521ns
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................813.430µs
+······Start:   proof of work
+········End:     proof of work .....................................................942ns
+······Start:   query phase
+········End:     query phase .......................................................224.900µs
+······End:     Produce FRI proof ...................................................1.056ms
+····End:     Step 5: Open polynomials ..............................................1.447ms
+··End:     Total proof generation ..................................................3.784ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 512
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 512 steps
+Trace generated with 512 rows
+Final result: 5442839935972449962
+Trace: 512x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.034µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................1.598ms
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 512, Quotient domain: 4096
+····End:     Step 2: Compute quotient polynomial ...................................379.650µs
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................2.729ms
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................601ns
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................1.642ms
+······Start:   proof of work
+········End:     proof of work .....................................................1.122µs
+······Start:   query phase
+········End:     query phase .......................................................254.676µs
+······End:     Produce FRI proof ...................................................1.918ms
+····End:     Step 5: Open polynomials ..............................................2.951ms
+··End:     Total proof generation ..................................................7.703ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 1024
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 1024 steps
+Trace generated with 1024 rows
+Final result: 15880425096321127166
+Trace: 1024x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.355µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................3.183ms
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 1024, Quotient domain: 8192
+····End:     Step 2: Compute quotient polynomial ...................................763.838µs
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................5.534ms
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................581ns
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................3.292ms
+······Start:   proof of work
+········End:     proof of work .....................................................1.854µs
+······Start:   query phase
+········End:     query phase .......................................................288.069µs
+······End:     Produce FRI proof ...................................................3.607ms
+····End:     Step 5: Open polynomials ..............................................5.143ms
+··End:     Total proof generation ..................................................14.663ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 2048
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 2048 steps
+Trace generated with 2048 rows
+Final result: 4801853165361874838
+Trace: 2048x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.174µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................6.466ms
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 2048, Quotient domain: 16384
+····End:     Step 2: Compute quotient polynomial ...................................1.480ms
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................11.451ms
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................631ns
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................6.533ms
+······Start:   proof of work
+········End:     proof of work .....................................................1.002µs
+······Start:   query phase
+········End:     query phase .......................................................365.453µs
+······End:     Produce FRI proof ...................................................6.921ms
+····End:     Step 5: Open polynomials ..............................................10.156ms
+··End:     Total proof generation ..................................................29.596ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 4096
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 4096 steps
+Trace generated with 4096 rows
+Final result: 12416642561160580112
+Trace: 4096x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.314µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................12.846ms
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 4096, Quotient domain: 32768
+····End:     Step 2: Compute quotient polynomial ...................................2.973ms
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................23.679ms
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................722ns
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................12.862ms
+······Start:   proof of work
+········End:     proof of work .....................................................1.102µs
+······Start:   query phase
+········End:     query phase .......................................................385.961µs
+······End:     Produce FRI proof ...................................................13.270ms
+····End:     Step 5: Open polynomials ..............................................19.487ms
+··End:     Total proof generation ..................................................59.032ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 8192
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 8192 steps
+Trace generated with 8192 rows
+Final result: 3188066912155121361
+Trace: 8192x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.174µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................25.716ms
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 8192, Quotient domain: 65536
+····End:     Step 2: Compute quotient polynomial ...................................5.964ms
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................48.393ms
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................831ns
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................26.164ms
+······Start:   proof of work
+········End:     proof of work .....................................................1.152µs
+······Start:   query phase
+········End:     query phase .......................................................452.155µs
+······End:     Produce FRI proof ...................................................26.642ms
+····End:     Step 5: Open polynomials ..............................................39.474ms
+··End:     Total proof generation ..................................................119.592ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 16384
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 16384 steps
+Trace generated with 16384 rows
+Final result: 8303825691740553808
+Trace: 16384x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.254µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................51.689ms
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 16384, Quotient domain: 131072
+····End:     Step 2: Compute quotient polynomial ...................................12.089ms
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................96.497ms
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................1.633µs
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................47.732ms
+······Start:   proof of work
+········End:     proof of work .....................................................1.112µs
+······Start:   query phase
+········End:     query phase .......................................................425.195µs
+······End:     Produce FRI proof ...................................................48.185ms
+····End:     Step 5: Open polynomials ..............................................72.944ms
+··End:     Total proof generation ..................................................233.282ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 32768
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 32768 steps
+Trace generated with 32768 rows
+Final result: 16642425265851951926
+Trace: 32768x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................1.924µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................87.521ms
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 32768, Quotient domain: 262144
+····End:     Step 2: Compute quotient polynomial ...................................22.031ms
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................167.554ms
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................1.112µs
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................94.692ms
+······Start:   proof of work
+········End:     proof of work .....................................................1.422µs
+······Start:   query phase
+········End:     query phase .......................................................584.092µs
+······End:     Produce FRI proof ...................................................95.316ms
+····End:     Step 5: Open polynomials ..............................................138.228ms
+··End:     Total proof generation ..................................................415.408ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 65536
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 65536 steps
+Trace generated with 65536 rows
+Final result: 1992259829781098888
+Trace: 65536x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.284µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................180.477ms
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 65536, Quotient domain: 524288
+····End:     Step 2: Compute quotient polynomial ...................................47.980ms
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................344.917ms
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................1.122µs
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................178.111ms
+······Start:   proof of work
+········End:     proof of work .....................................................1.583µs
+······Start:   query phase
+········End:     query phase .......................................................601.785µs
+······End:     Produce FRI proof ...................................................180.020ms
+····End:     Step 5: Open polynomials ..............................................264.464ms
+··End:     Total proof generation ..................................................837.926ms
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 131072
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 131072 steps
+Trace generated with 131072 rows
+Final result: 15965140268002129685
+Trace: 131072x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.214µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................359.158ms
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 131072, Quotient domain: 1048576
+····End:     Step 2: Compute quotient polynomial ...................................124.125ms
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................715.145ms
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................1.242µs
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................357.347ms
+······Start:   proof of work
+········End:     proof of work .....................................................1.774µs
+······Start:   query phase
+········End:     query phase .......................................................660.936µs
+······End:     Produce FRI proof ...................................................358.056ms
+····End:     Step 5: Open polynomials ..............................................525.370ms
+··End:     Total proof generation ..................................................1.723s
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 262144
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 262144 steps
+Trace generated with 262144 rows
+Final result: 10760208750519537098
+Trace: 262144x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.224µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................722.450ms
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 262144, Quotient domain: 2097152
+····End:     Step 2: Compute quotient polynomial ...................................281.018ms
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................1.484s
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................1.493µs
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................723.064ms
+······Start:   proof of work
+········End:     proof of work .....................................................1.353µs
+······Start:   query phase
+········End:     query phase .......................................................800.317µs
+······End:     Produce FRI proof ...................................................736.094ms
+····End:     Step 5: Open polynomials ..............................................1.203s
+··End:     Total proof generation ..................................................3.691s
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 524288
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 524288 steps
+Trace generated with 524288 rows
+Final result: 3923209305393863194
+Trace: 524288x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................2.565µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................1.461s
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 524288, Quotient domain: 4194304
+····End:     Step 2: Compute quotient polynomial ...................................680.096ms
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................3.115s
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................1.052µs
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................1.453s
+······Start:   proof of work
+········End:     proof of work .....................................................1.603µs
+······Start:   query phase
+········End:     query phase .......................................................937.683µs
+······End:     Produce FRI proof ...................................................1.463s
+····End:     Step 5: Open polynomials ..............................................2.372s
+··End:     Total proof generation ..................................................7.629s
+Proof generated successfully!
+Proof verified successfully!
+Number of steps: 1048576
+Generating proof for Fibonacci-like sequence (x1^8 + x2) with 1048576 steps
+Trace generated with 1048576 rows
+Final result: 7887357004267014627
+Trace: 1048576x2
+FRI params: FriParameters { log_blowup: 3, log_final_poly_len: 1, num_queries: 100, proof_of_work_bits: 1, mmcs: ExtensionMmcs { inner: MerkleTreeMmcs { hash: SerializingHasher { inner: PaddingFreeSponge { permutation: KeccakF } }, compress: CompressionFunctionFromHasher { hasher: PaddingFreeSponge { permutation: KeccakF } }, _phantom: PhantomData<([p3_goldilocks::goldilocks::Goldilocks; 2], [u64; 2])> }, _phantom: PhantomData<(p3_goldilocks::goldilocks::Goldilocks, p3_field::extension::binomial_extension::BinomialExtensionField<p3_goldilocks::goldilocks::Goldilocks, 2>)> } }
+Start:   Total proof generation
+··Start:   Step 0: Instance setup
+····End:     Step 0: Instance setup ................................................4.940µs
+··Start:   Step 1: Commit to execution trace
+····End:     Step 1: Commit to execution trace .....................................3.044s
+··Start:   Step 2: Compute quotient polynomial
+Trace domain: 1048576, Quotient domain: 8388608
+····End:     Step 2: Compute quotient polynomial ...................................1.607s
+··Start:   Step 3: Commit to quotient polynomial
+····End:     Step 3: Commit to quotient polynomial .................................6.661s
+··Start:   Step 4: Sample out-of-domain point
+····End:     Step 4: Sample out-of-domain point ....................................1.092µs
+··Start:   Step 5: Open polynomials
+····Start:   Produce FRI proof
+input poly len: 1
+······Start:   commit phase
+········End:     commit phase ......................................................2.931s
+······Start:   proof of work
+········End:     proof of work .....................................................1.302µs
+······Start:   query phase
+········End:     query phase .......................................................942.342µs
+······End:     Produce FRI proof ...................................................2.956s
+····End:     Step 5: Open polynomials ..............................................4.879s
+··End:     Total proof generation ..................................................16.193s
+Proof generated successfully!
+Proof verified successfully!

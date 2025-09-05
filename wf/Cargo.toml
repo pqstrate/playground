@@ -8,6 +8,7 @@ name = "wf_demo"
 path = "src/main.rs"
 
 [dependencies]
+ark-std = { workspace = true }
 winterfell = { workspace = true }
 core-utils = { workspace = true }
 tracing = { workspace = true }

@@ -228,6 +228,7 @@ checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
 name = "p3"
 version = "0.1.0"
 dependencies = [
+ "ark-std",
  "p3-air",
  "p3-challenger",
  "p3-commit",
@@ -250,6 +251,8 @@ dependencies = [
 [[package]]
 name = "p3-air"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2287ebb1095c4d98b1c2edf7f8edacdf2aa09ceb5eb31ec7dcfeb6040bb1aca"
 dependencies = [
  "p3-field",
  "p3-matrix",
@@ -258,6 +261,8 @@ dependencies = [
 [[package]]
 name = "p3-challenger"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "998a0de338749383ef23dae0f0b4ce9374f89ef0ac55ef1829e31e950555ccd9"
 dependencies = [
  "p3-field",
  "p3-maybe-rayon",
@@ -269,6 +274,8 @@ dependencies = [
 [[package]]
 name = "p3-commit"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "11369db94eeedae4cbcd6627685ded13d2b1eef87fa4f111bca7df2ddfef75c8"
 dependencies = [
  "itertools",
  "p3-challenger",
@@ -282,6 +289,8 @@ dependencies = [
 [[package]]
 name = "p3-dft"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3b2764a3982d22d62aa933c8de6f9d71d8a474c9110b69e675dea1887bdeffc"
 dependencies = [
  "itertools",
  "p3-field",
@@ -294,6 +303,8 @@ dependencies = [
 [[package]]
 name = "p3-field"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc13a73509fe09c67b339951ca8d4cc6e61c9bf08c130dbc90dda52452918cc2"
 dependencies = [
  "itertools",
  "num-bigint",
@@ -308,8 +319,9 @@ dependencies = [
 [[package]]
 name = "p3-fri"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8c4e95bfdd1bf5a798152b65a54c02e04dec23c4b276ef5eb1a808c61b14cf63"
 dependencies = [
- "ark-std",
  "itertools",
  "p3-challenger",
  "p3-commit",
@@ -327,6 +339,8 @@ dependencies = [
 [[package]]
 name = "p3-goldilocks"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "552849f6309ffde34af0d31aa9a2d0a549cb0ec138d9792bfbf4a17800742362"
 dependencies = [
  "num-bigint",
  "p3-dft",
@@ -343,6 +357,8 @@ dependencies = [
 [[package]]
 name = "p3-interpolation"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "001c8017284709b5cbb1c78ffa6423db2e45c58ae3b97a7ce73cd273626ab3f4"
 dependencies = [
  "p3-field",
  "p3-matrix",
@@ -353,6 +369,8 @@ dependencies = [
 [[package]]
 name = "p3-keccak"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "983558255a7f891112734b1af6a0cbd9aff053e43811926235a39d1b44a61564"
 dependencies = [
  "p3-field",
  "p3-symmetric",
@@ -363,6 +381,8 @@ dependencies = [
 [[package]]
 name = "p3-matrix"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c8e1e9f69c2fe15768b3ceb2915edb88c47398aa22c485d8163deab2a47fe194"
 dependencies = [
  "itertools",
  "p3-field",
@@ -377,10 +397,14 @@ dependencies = [
 [[package]]
 name = "p3-maybe-rayon"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "33f765046b763d046728b3246b690f81dfa7ccd7523b7a1582c74f616fbce6a0"
 
 [[package]]
 name = "p3-mds"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6c90541c6056712daf2ee69ec328db8b5605ae8dbafe60226c8eb75eaac0e1f9"
 dependencies = [
  "p3-dft",
  "p3-field",
@@ -392,6 +416,8 @@ dependencies = [
 [[package]]
 name = "p3-merkle-tree"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f632c6bc686cc25b145ca6382b4ed3926003dbf66f4d7171ae5cdcf4d3d02a67"
 dependencies = [
  "itertools",
  "p3-commit",
@@ -408,6 +434,8 @@ dependencies = [
 [[package]]
 name = "p3-poseidon2"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88e9f053f120a78ad27e9c1991a0ea547777328ca24025c42364d6ee2667d59a"
 dependencies = [
  "p3-field",
  "p3-mds",
@@ -419,6 +447,8 @@ dependencies = [
 [[package]]
 name = "p3-symmetric"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72d5db8f05a26d706dfd8aaf7aa4272ca4f3e7a075db897ec7108f24fad78759"
 dependencies = [
  "itertools",
  "p3-field",
@@ -428,8 +458,9 @@ dependencies = [
 [[package]]
 name = "p3-uni-stark"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ccab141db29e5efcadb7e5fff65944a49259264637af1121dfa2db577deae453"
 dependencies = [
- "ark-std",
  "itertools",
  "p3-air",
  "p3-challenger",
@@ -446,6 +477,8 @@ dependencies = [
 [[package]]
 name = "p3-util"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6dfee67245d9ce78a15176728da2280032f0a84b5819a39a953e7ec03cfd9bd7"
 dependencies = [
  "serde",
 ]
@@ -684,6 +717,7 @@ dependencies = [
 name = "wf"
 version = "0.1.0"
 dependencies = [
+ "ark-std",
  "tracing",
  "winter-utils",
  "winterfell",
@@ -765,6 +799,8 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 [[package]]
 name = "winter-air"
 version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef01227f23c7c331710f43b877a8333f5f8d539631eea763600f1a74bf018c7c"
 dependencies = [
  "libm",
  "winter-crypto",
@@ -776,6 +812,8 @@ dependencies = [
 [[package]]
 name = "winter-crypto"
 version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1cdb247bc142438798edb04067ab72a22cf815f57abbd7b78a6fa986fc101db8"
 dependencies = [
  "blake3",
  "sha3",
@@ -786,6 +824,8 @@ dependencies = [
 [[package]]
 name = "winter-fri"
 version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fd592b943f9d65545683868aaf1b601eb66e52bfd67175347362efff09101d3a"
 dependencies = [
  "winter-crypto",
  "winter-math",
@@ -795,6 +835,8 @@ dependencies = [
 [[package]]
 name = "winter-math"
 version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7aecfb48ee6a8b4746392c8ff31e33e62df8528a3b5628c5af27b92b14aef1ea"
 dependencies = [
  "winter-utils",
 ]
@@ -802,6 +844,8 @@ dependencies = [
 [[package]]
 name = "winter-maybe-async"
 version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d31a19dae58475d019850e25b0170e94b16d382fbf6afee9c0e80fdc935e73e"
 dependencies = [
  "quote",
  "syn",
@@ -810,8 +854,9 @@ dependencies = [
 [[package]]
 name = "winter-prover"
 version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "84cc631ed56cd39b78ef932c1ec4060cc6a44d114474291216c32f56655b3048"
 dependencies = [
- "ark-std",
  "tracing",
  "winter-air",
  "winter-crypto",
@@ -824,10 +869,14 @@ dependencies = [
 [[package]]
 name = "winter-utils"
 version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9951263ef5317740cd0f49e618db00c72fabb70b75756ea26c4d5efe462c04dd"
 
 [[package]]
 name = "winter-verifier"
 version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0425ea81f8f703a1021810216da12003175c7974a584660856224df04b2e2fdb"
 dependencies = [
  "winter-air",
  "winter-crypto",
@@ -839,6 +888,8 @@ dependencies = [
 [[package]]
 name = "winterfell"
 version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "43f824ddd5aec8ca6a54307f20c115485a8a919ea94dd26d496d856ca6185f4f"
 dependencies = [
  "winter-air",
  "winter-prover",

@@ -1,4 +1,5 @@
 use std::marker::PhantomData;
+use ark_std::{end_timer, start_timer};
 use winterfell::{
     crypto::{DefaultRandomCoin, ElementHasher, MerkleTree},
     math::{fields::f128::BaseElement, FieldElement},
@@ -200,8 +201,9 @@ pub fn run_example(num_steps: usize) -> Result<(), Box<dyn std::error::Error>> {
     let pub_inputs = prover.get_pub_inputs(&trace);
 
     println!("Final result: {}", pub_inputs);
-
+    let timer = start_timer!(|| format!("proving {} steps", num_steps));
     let proof = prover.prove(trace)?;
+    end_timer!(timer);
     println!("Proof generated successfully!");
 
     let acceptable_options =
