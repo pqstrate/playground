@@ -14,7 +14,7 @@ use p3_symmetric::{CompressionFunctionFromHasher, PaddingFreeSponge, Serializing
 use p3_uni_stark::{prove, verify, StarkConfig};
 use tracing::instrument;
 
-const TRACE_WIDTH: usize = 2;
+// TRACE_WIDTH is now dynamic based on num_col
 
 type Val = Goldilocks;
 type Challenge = BinomialExtensionField<Val, 2>;
@@ -39,11 +39,12 @@ pub type MyConfig = StarkConfig<Pcs, Challenge, Challenger>;
 #[derive(Clone)]
 pub struct FibLikeAir {
     pub final_result: Val,
+    pub num_col: usize,
 }
 
 impl<F> BaseAir<F> for FibLikeAir {
     fn width(&self) -> usize {
-        TRACE_WIDTH
+        self.num_col
     }
 }
 
@@ -53,12 +54,10 @@ impl<AB: AirBuilder> Air<AB> for FibLikeAir {
         let local = main.row_slice(0).expect("Matrix is empty?");
         let next = main.row_slice(1).expect("Matrix only has 1 row?");
 
+        // Get all local variables
         let x1 = local[0].clone();
-        let x2 = local[1].clone();
-        let next_x1 = next[0].clone();
-        let next_x2 = next[1].clone();
-
-        // Constraint: next_x1 = x1^8 + x2
+        
+        // Constraint: x_1^8 + x_2 + ... + x_{num_col-1} = x_num_col
         let x1_pow8 = x1.clone()
             * x1.clone()
             * x1.clone()
@@ -67,60 +66,94 @@ impl<AB: AirBuilder> Air<AB> for FibLikeAir {
             * x1.clone()
             * x1.clone()
             * x1.clone();
+        
+        let mut sum = x1_pow8;
+        
+        // Add x_2 through x_{num_col-1}
+        for i in 1..self.num_col - 1 {
+            sum = sum + local[i].clone();
+        }
+        
+        // Assert sum equals x_num_col (last column)
+        builder.assert_zero(sum - local[self.num_col - 1].clone());
+
+        // Transition constraint: next_x1 = current x_num_col
+        let next_x1 = next[0].clone();
         builder
             .when_transition()
-            .assert_eq(next_x1, x1_pow8 + x2.clone());
+            .assert_eq(next_x1, local[self.num_col - 1].clone());
 
-        // Constraint: next_x2 = x1 (shift register)
-        builder.when_transition().assert_eq(next_x2, x1.clone());
-
-        // Initial constraints
-        builder
-            .when_first_row()
-            .assert_eq(x1.clone(), AB::Expr::ONE);
-        builder.when_first_row().assert_eq(x2, AB::Expr::ONE);
-
-        // Final constraint
-        // We'll skip the final constraint for now to get it working
+        // Initial constraints: first num_col-1 columns start with 1
+        for i in 0..self.num_col - 1 {
+            builder
+                .when_first_row()
+                .assert_eq(local[i].clone(), AB::Expr::ONE);
+        }
     }
 }
 
-pub fn generate_trace(num_steps: usize) -> (RowMajorMatrix<Val>, Val) {
+pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>, Val) {
     assert!(num_steps.is_power_of_two());
+    assert!(num_col >= 2, "num_col must be at least 2");
 
-    let mut values = Vec::with_capacity(num_steps * TRACE_WIDTH);
+    let mut values = Vec::with_capacity(num_steps * num_col);
 
-    let mut x1 = Val::ONE;
-    let mut x2 = Val::ONE;
+    // Initialize first row: need to satisfy x_1^8 + x_2 + ... + x_{num_col-1} = x_num_col
+    let mut current_row = vec![Val::ONE; num_col];
+    
+    // Make the first row satisfy the constraint: x_1^8 + x_2 + ... + x_{num_col-1} = x_num_col
+    let x1_pow8 = current_row[0].exp_u64(8); // 1^8 = 1
+    let mut sum = x1_pow8;
+    for i in 1..num_col - 1 {
+        sum += current_row[i]; // Add x_2, x_3, ..., x_{num_col-1}
+    }
+    current_row[num_col - 1] = sum; // Set x_num_col = sum
 
-    for _ in 0..num_steps {
-        values.push(x1);
-        values.push(x2);
+    for step in 0..num_steps {
+        // Add current row to trace
+        values.extend_from_slice(&current_row);
 
-        let next_x1 = x1.exp_u64(8) + x2;
-        let next_x2 = x1;
-
-        x1 = next_x1;
-        x2 = next_x2;
+        // Compute next row if not the last step
+        if step < num_steps - 1 {
+            let mut next_row = vec![Val::ZERO; num_col];
+            
+            // x_1 of next row = x_num_col of current row
+            next_row[0] = current_row[num_col - 1];
+            
+            // For columns 1 to num_col-2: set to 1 for simplicity
+            for i in 1..num_col - 1 {
+                next_row[i] = Val::ONE;
+            }
+            
+            // x_num_col = x_1^8 + x_2 + ... + x_{num_col-1}
+            let x1_pow8 = next_row[0].exp_u64(8);
+            let mut sum = x1_pow8;
+            for i in 1..num_col - 1 {
+                sum += next_row[i];
+            }
+            next_row[num_col - 1] = sum;
+            
+            current_row = next_row;
+        }
     }
 
-    let final_result = values[values.len() - TRACE_WIDTH];
-    let trace = RowMajorMatrix::new(values, TRACE_WIDTH);
-    println!("Trace generated with {} rows", trace.height());
+    let final_result = values[values.len() - num_col]; // First element of last row
+    let trace = RowMajorMatrix::new(values, num_col);
+    println!("Trace generated with {} rows, {} cols", trace.height(), trace.width());
 
     (trace, final_result)
 }
 
 #[instrument]
-pub fn run_example(num_steps: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
     println!(
-        "Generating proof for Fibonacci-like sequence (x1^8 + x2) with {} steps",
-        num_steps
+        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps",
+        num_col - 1, num_col, num_steps
     );
 
-    let (trace, final_result) = generate_trace(num_steps);
-    println!("Final result: {}", final_result);
-    println!("Trace: {}x{}", trace.height(), trace.width());
+    let (trace, final_result) = generate_trace(num_steps, num_col);
+    // println!("Final result: {}", final_result);
+    println!("Trace size: {}x{}", trace.height(), trace.width());
 
     // Set up cryptography like in fib_air test
     let byte_hash = ByteHash {};
@@ -139,13 +172,13 @@ pub fn run_example(num_steps: usize) -> Result<(), Box<dyn std::error::Error>> {
         proof_of_work_bits: 1,
         mmcs: challenge_mmcs,
     };
-    println!("FRI params: {:?}", fri_params);
+    // println!("FRI params: {:?}", fri_params);
 
     let pcs = Pcs::new(dft, val_mmcs, fri_params);
     let challenger = Challenger::from_hasher(vec![], byte_hash);
 
     let config = MyConfig::new(pcs, challenger);
-    let air = FibLikeAir { final_result };
+    let air = FibLikeAir { final_result, num_col };
 
     let timer = start_timer!(|| format!("proving for {} steps", num_steps));
     let proof = prove(&config, &air, trace, &vec![]);
@@ -170,29 +203,43 @@ mod tests {
 
     #[test]
     fn test_power8_gate_small() {
-        run_example(16).expect("Small power8 gate test failed");
+        run_example(16, 3).expect("Small power8 gate test failed");
     }
 
     #[test]
     fn test_power8_gate_medium() {
-        run_example(256).expect("Medium power8 gate test failed");
+        run_example(256, 4).expect("Medium power8 gate test failed");
     }
 
     #[test]
     fn test_trace_generation() {
-        let (trace, final_result) = generate_trace(8);
+        let (trace, final_result) = generate_trace(8, 3);
         assert_eq!(trace.height(), 8);
-        assert_eq!(trace.width(), 2);
+        assert_eq!(trace.width(), 3);
 
-        // Verify first few values manually
+        // Verify first row: x1=1, x2=1, x3=x1^8+x2=1^8+1=2
         assert_eq!(trace.get(0, 0), Some(Val::ONE)); // x1[0] = 1
-        assert_eq!(trace.get(0, 1), Some(Val::ONE)); // x2[0] = 1
+        assert_eq!(trace.get(0, 1), Some(Val::ONE)); // x2[0] = 1  
+        assert_eq!(trace.get(0, 2), Some(Val::from_u64(2))); // x3[0] = 1^8 + 1 = 2
 
-        // x1[1] should be 1^8 + 1 = 2
+        // For second row: x1 = previous x3 = 2, x2 = 1, x3 = x1^8 + x2 = 2^8 + 1 = 257
         assert_eq!(trace.get(1, 0), Some(Val::from_u64(2)));
-        // x2[1] should be 1 (previous x1)
         assert_eq!(trace.get(1, 1), Some(Val::ONE));
+        assert_eq!(trace.get(1, 2), Some(Val::from_u64(257))); // 2^8 + 1 = 256 + 1 = 257
 
         println!("Trace verification passed, final result: {}", final_result);
+    }
+
+    #[test]
+    fn test_different_column_sizes() {
+        // Test with 2 columns
+        let (trace2, _) = generate_trace(4, 2);
+        assert_eq!(trace2.width(), 2);
+        
+        // Test with 5 columns  
+        let (trace5, _) = generate_trace(4, 5);
+        assert_eq!(trace5.width(), 5);
+
+        println!("Different column size tests passed");
     }
 }
