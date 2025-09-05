@@ -56,7 +56,7 @@ impl<AB: AirBuilder> Air<AB> for FibLikeAir {
 
         // Get all local variables
         let x1 = local[0].clone();
-        
+
         // Constraint: x_1^8 + x_2 + ... + x_{num_col-1} = x_num_col
         let x1_pow8 = x1.clone()
             * x1.clone()
@@ -66,14 +66,14 @@ impl<AB: AirBuilder> Air<AB> for FibLikeAir {
             * x1.clone()
             * x1.clone()
             * x1.clone();
-        
+
         let mut sum = x1_pow8;
-        
+
         // Add x_2 through x_{num_col-1}
         for i in 1..self.num_col - 1 {
             sum = sum + local[i].clone();
         }
-        
+
         // Assert sum equals x_num_col (last column)
         builder.assert_zero(sum - local[self.num_col - 1].clone());
 
@@ -100,7 +100,7 @@ pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>,
 
     // Initialize first row: need to satisfy x_1^8 + x_2 + ... + x_{num_col-1} = x_num_col
     let mut current_row = vec![Val::ONE; num_col];
-    
+
     // Make the first row satisfy the constraint: x_1^8 + x_2 + ... + x_{num_col-1} = x_num_col
     let x1_pow8 = current_row[0].exp_u64(8); // 1^8 = 1
     let mut sum = x1_pow8;
@@ -116,15 +116,15 @@ pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>,
         // Compute next row if not the last step
         if step < num_steps - 1 {
             let mut next_row = vec![Val::ZERO; num_col];
-            
+
             // x_1 of next row = x_num_col of current row
             next_row[0] = current_row[num_col - 1];
-            
+
             // For columns 1 to num_col-2: set to 1 for simplicity
             for i in 1..num_col - 1 {
                 next_row[i] = Val::ONE;
             }
-            
+
             // x_num_col = x_1^8 + x_2 + ... + x_{num_col-1}
             let x1_pow8 = next_row[0].exp_u64(8);
             let mut sum = x1_pow8;
@@ -132,14 +132,18 @@ pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>,
                 sum += next_row[i];
             }
             next_row[num_col - 1] = sum;
-            
+
             current_row = next_row;
         }
     }
 
     let final_result = values[values.len() - num_col]; // First element of last row
     let trace = RowMajorMatrix::new(values, num_col);
-    println!("Trace generated with {} rows, {} cols", trace.height(), trace.width());
+    println!(
+        "Trace generated with {} rows, {} cols",
+        trace.height(),
+        trace.width()
+    );
 
     (trace, final_result)
 }
@@ -148,7 +152,9 @@ pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>,
 pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps",
-        num_col - 1, num_col, num_steps
+        num_col - 1,
+        num_col,
+        num_steps
     );
 
     let (trace, final_result) = generate_trace(num_steps, num_col);
@@ -166,7 +172,7 @@ pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::
     let dft = Dft::default();
 
     let fri_params = FriParameters {
-        log_blowup: 3, 
+        log_blowup: 3,
         log_final_poly_len: 1,
         num_queries: 100,
         proof_of_work_bits: 1,
@@ -178,7 +184,10 @@ pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::
     let challenger = Challenger::from_hasher(vec![], byte_hash);
 
     let config = MyConfig::new(pcs, challenger);
-    let air = FibLikeAir { final_result, num_col };
+    let air = FibLikeAir {
+        final_result,
+        num_col,
+    };
 
     let timer = start_timer!(|| format!("proving for {} steps", num_steps));
     let proof = prove(&config, &air, trace, &vec![]);
@@ -219,7 +228,7 @@ mod tests {
 
         // Verify first row: x1=1, x2=1, x3=x1^8+x2=1^8+1=2
         assert_eq!(trace.get(0, 0), Some(Val::ONE)); // x1[0] = 1
-        assert_eq!(trace.get(0, 1), Some(Val::ONE)); // x2[0] = 1  
+        assert_eq!(trace.get(0, 1), Some(Val::ONE)); // x2[0] = 1
         assert_eq!(trace.get(0, 2), Some(Val::from_u64(2))); // x3[0] = 1^8 + 1 = 2
 
         // For second row: x1 = previous x3 = 2, x2 = 1, x3 = x1^8 + x2 = 2^8 + 1 = 257
@@ -235,8 +244,8 @@ mod tests {
         // Test with 2 columns
         let (trace2, _) = generate_trace(4, 2);
         assert_eq!(trace2.width(), 2);
-        
-        // Test with 5 columns  
+
+        // Test with 5 columns
         let (trace5, _) = generate_trace(4, 5);
         assert_eq!(trace5.width(), 5);
 

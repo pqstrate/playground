@@ -1,5 +1,5 @@
-use std::marker::PhantomData;
 use ark_std::{end_timer, start_timer};
+use std::marker::PhantomData;
 use winterfell::{
     crypto::{DefaultRandomCoin, ElementHasher, MerkleTree},
     math::{fields::f128::BaseElement, FieldElement},
@@ -7,15 +7,16 @@ use winterfell::{
     Air, AirContext, Assertion, AuxRandElements, BatchingMethod, CompositionPoly,
     CompositionPolyTrace, ConstraintCompositionCoefficients, DefaultConstraintCommitment,
     DefaultConstraintEvaluator, DefaultTraceLde, EvaluationFrame, FieldExtension, PartitionOptions,
-    ProofOptions, Prover, StarkDomain, TraceInfo, TracePolyTable, TraceTable,
+    ProofOptions, Prover, StarkDomain, Trace, TraceInfo, TracePolyTable, TraceTable,
     TransitionConstraintDegree,
 };
 
-const TRACE_WIDTH: usize = 2;
+// TRACE_WIDTH is now dynamic based on num_col
 
 pub struct FibLikeAir {
     context: AirContext<BaseElement>,
     result: BaseElement,
+    num_col: usize,
 }
 
 impl Air for FibLikeAir {
@@ -23,14 +24,16 @@ impl Air for FibLikeAir {
     type PublicInputs = BaseElement;
 
     fn new(trace_info: TraceInfo, pub_inputs: Self::BaseField, options: ProofOptions) -> Self {
-        let degrees = vec![
-            TransitionConstraintDegree::new(8),
-            TransitionConstraintDegree::new(1),
-        ];
-        assert_eq!(TRACE_WIDTH, trace_info.width());
+        let num_col = trace_info.width();
+        let mut degrees = vec![TransitionConstraintDegree::new(8)]; // Main constraint
+        if num_col > 2 {
+            degrees.push(TransitionConstraintDegree::new(1)); // Transition constraint
+        }
+        assert_eq!(trace_info.width(), trace_info.width()); // Remove hardcoded width check
         FibLikeAir {
-            context: AirContext::new(trace_info, degrees, 3, options),
+            context: AirContext::new(trace_info, degrees.clone(), degrees.len(), options),
             result: pub_inputs,
+            num_col,
         }
     }
 
@@ -47,11 +50,10 @@ impl Air for FibLikeAir {
         let current = frame.current();
         let next = frame.next();
 
-        debug_assert_eq!(TRACE_WIDTH, current.len());
-        debug_assert_eq!(TRACE_WIDTH, next.len());
+        debug_assert_eq!(self.num_col, current.len());
+        debug_assert_eq!(self.num_col, next.len());
 
-        // Constraint: next[0] = current[0]^8 + current[1]
-        // Constraint: next[1] = current[0] (shift register)
+        // Main constraint: x_1^8 + x_2 + ... + x_{num_col-1} = x_num_col
         let x1_pow8 = current[0]
             * current[0]
             * current[0]
@@ -61,15 +63,24 @@ impl Air for FibLikeAir {
             * current[0]
             * current[0];
 
-        result[0] = next[0] - (x1_pow8 + current[1]);
-        result[1] = next[1] - current[0];
+        let mut sum = x1_pow8;
+        for i in 1..self.num_col - 1 {
+            sum = sum + current[i];
+        }
+
+        result[0] = current[self.num_col - 1] - sum;
+
+        // Transition constraint: next_x1 = current_x_num_col
+        if result.len() > 1 {
+            result[1] = next[0] - current[self.num_col - 1];
+        }
     }
 
     fn get_assertions(&self) -> Vec<Assertion<Self::BaseField>> {
         let last_step = self.trace_length() - 1;
         vec![
+            // Only essential initial assertions
             Assertion::single(0, 0, BaseElement::new(1)), // x1 starts at 1
-            Assertion::single(1, 0, BaseElement::new(1)), // x2 starts at 1
             Assertion::single(0, last_step, self.result), // final result
         ]
     }
@@ -88,30 +99,60 @@ impl<H: ElementHasher> FibLikeProver<H> {
         }
     }
 
-    pub fn build_trace(&self, num_steps: usize) -> TraceTable<BaseElement> {
+    pub fn build_trace(&self, num_steps: usize, num_col: usize) -> TraceTable<BaseElement> {
         assert!(num_steps.is_power_of_two());
+        assert!(num_col >= 2, "num_col must be at least 2");
 
-        let mut x1_col = Vec::with_capacity(num_steps);
-        let mut x2_col = Vec::with_capacity(num_steps);
+        // Initialize columns
+        let mut columns: Vec<Vec<BaseElement>> = (0..num_col)
+            .map(|_| Vec::with_capacity(num_steps))
+            .collect();
 
-        let mut x1 = BaseElement::new(1);
-        let mut x2 = BaseElement::new(1);
+        // Initialize first row: first num_col-1 columns are 1, last column satisfies constraint
+        let mut current_row = vec![BaseElement::new(1); num_col];
 
-        x1_col.push(x1);
-        x2_col.push(x2);
+        // Compute x_num_col = x_1^8 + x_2 + ... + x_{num_col-1}
+        let x1_pow8 = current_row[0].exp(8u64.into());
+        let mut sum = x1_pow8;
+        for i in 1..num_col - 1 {
+            sum = sum + current_row[i];
+        }
+        current_row[num_col - 1] = sum;
 
-        for _ in 1..num_steps {
-            let next_x1 = x1.exp(8u64.into()) + x2;
-            let next_x2 = x1;
-
-            x1_col.push(next_x1);
-            x2_col.push(next_x2);
-
-            x1 = next_x1;
-            x2 = next_x2;
+        // Add first row to columns
+        for i in 0..num_col {
+            columns[i].push(current_row[i]);
         }
 
-        TraceTable::init(vec![x1_col, x2_col])
+        // Generate remaining rows
+        for _ in 1..num_steps {
+            let mut next_row = vec![BaseElement::ZERO; num_col];
+
+            // x_1 of next row = x_num_col of current row
+            next_row[0] = current_row[num_col - 1];
+
+            // Set columns 1 to num_col-2 to 1 for simplicity
+            for i in 1..num_col - 1 {
+                next_row[i] = BaseElement::new(1);
+            }
+
+            // x_num_col = x_1^8 + x_2 + ... + x_{num_col-1}
+            let x1_pow8 = next_row[0].exp(8u64.into());
+            let mut sum = x1_pow8;
+            for i in 1..num_col - 1 {
+                sum = sum + next_row[i];
+            }
+            next_row[num_col - 1] = sum;
+
+            // Add row to columns
+            for i in 0..num_col {
+                columns[i].push(next_row[i]);
+            }
+
+            current_row = next_row;
+        }
+
+        TraceTable::init(columns)
     }
 }
 
@@ -177,9 +218,11 @@ where
     }
 }
 
-pub fn run_example(num_steps: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
     println!(
-        "Generating proof for Fibonacci-like sequence (x1^8 + x2) with {} steps",
+        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps",
+        num_col - 1,
+        num_col,
         num_steps
     );
 
@@ -197,10 +240,10 @@ pub fn run_example(num_steps: usize) -> Result<(), Box<dyn std::error::Error>> {
     let prover =
         FibLikeProver::<winterfell::crypto::hashers::Blake3_256<BaseElement>>::new(options);
 
-    let trace = prover.build_trace(num_steps);
+    let trace = prover.build_trace(num_steps, num_col);
     let pub_inputs = prover.get_pub_inputs(&trace);
 
-    println!("Final result: {}", pub_inputs);
+    println!("Trace size: {}x{}", trace.length(), trace.width());
     let timer = start_timer!(|| format!("proving {} steps", num_steps));
     let proof = prover.prove(trace)?;
     end_timer!(timer);
