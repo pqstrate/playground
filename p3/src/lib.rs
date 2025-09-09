@@ -1,4 +1,4 @@
-use ark_std::{end_timer, start_timer};
+use ark_std::{end_timer, rand::RngCore, start_timer, test_rng};
 use p3_air::{Air, AirBuilder, BaseAir};
 use p3_challenger::{HashChallenger, SerializingChallenger64};
 use p3_commit::ExtensionMmcs;
@@ -83,23 +83,21 @@ impl<AB: AirBuilder> Air<AB> for FibLikeAir {
             .when_transition()
             .assert_eq(next_x1, local[self.num_col - 1].clone());
 
-        // Initial constraints: first num_col-1 columns start with 1
-        for i in 0..self.num_col - 1 {
-            builder
-                .when_first_row()
-                .assert_eq(local[i].clone(), AB::Expr::ONE);
-        }
+        // No initial constraints needed - allowing random starting values
     }
 }
 
 pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>, Val) {
+    let mut rng = test_rng();
     assert!(num_steps.is_power_of_two());
     assert!(num_col >= 2, "num_col must be at least 2");
 
     let mut values = Vec::with_capacity(num_steps * num_col);
 
     // Initialize first row: need to satisfy x_1^8 + x_2 + ... + x_{num_col-1} = x_num_col
-    let mut current_row = vec![Val::ONE; num_col];
+    let mut current_row = (0..num_col)
+        .map(|_| Val::from_u32(rng.next_u32()))
+        .collect::<Vec<_>>();
 
     // Make the first row satisfy the constraint: x_1^8 + x_2 + ... + x_{num_col-1} = x_num_col
     let x1_pow8 = current_row[0].exp_u64(8); // 1^8 = 1
@@ -226,15 +224,16 @@ mod tests {
         assert_eq!(trace.height(), 8);
         assert_eq!(trace.width(), 3);
 
-        // Verify first row: x1=1, x2=1, x3=x1^8+x2=1^8+1=2
-        assert_eq!(trace.get(0, 0), Some(Val::ONE)); // x1[0] = 1
-        assert_eq!(trace.get(0, 1), Some(Val::ONE)); // x2[0] = 1
-        assert_eq!(trace.get(0, 2), Some(Val::from_u64(2))); // x3[0] = 1^8 + 1 = 2
+        // Verify constraint satisfaction for first row: x1^8 + x2 = x3
+        let x1 = trace.get(0, 0).unwrap();
+        let x2 = trace.get(0, 1).unwrap();
+        let x3 = trace.get(0, 2).unwrap();
+        let expected_x3 = x1.exp_u64(8) + x2;
+        assert_eq!(x3, expected_x3);
 
-        // For second row: x1 = previous x3 = 2, x2 = 1, x3 = x1^8 + x2 = 2^8 + 1 = 257
-        assert_eq!(trace.get(1, 0), Some(Val::from_u64(2)));
-        assert_eq!(trace.get(1, 1), Some(Val::ONE));
-        assert_eq!(trace.get(1, 2), Some(Val::from_u64(257))); // 2^8 + 1 = 256 + 1 = 257
+        // Verify transition: x1[1] = x3[0]
+        let x1_next = trace.get(1, 0).unwrap();
+        assert_eq!(x1_next, x3);
 
         println!("Trace verification passed, final result: {}", final_result);
     }

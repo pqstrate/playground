@@ -8,7 +8,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for log_num_steps in 10..=20 {
         let num_steps = 1 << log_num_steps;
-        for num_col in [3, 10, 40, 80].iter() {
+        for &num_col in [3, 10, 40, 80].iter() {
             println!("Number of steps: {}, Columns: {}", num_steps, num_col);
             run_example(num_steps, num_col)?;
         }
