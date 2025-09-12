@@ -1,16 +1,16 @@
-use ark_std::{rand::RngCore, test_rng};
+use rand::{RngCore, SeedableRng, rngs::SmallRng};
 use p3_air::{Air, AirBuilder, BaseAir};
-use p3_challenger::{HashChallenger, SerializingChallenger64};
+use p3_challenger::{HashChallenger, SerializingChallenger64, DuplexChallenger};
 use p3_commit::ExtensionMmcs;
 use p3_dft::Radix2DitParallel;
 use p3_field::extension::BinomialExtensionField;
 use p3_field::PrimeCharacteristicRing;
 use p3_fri::{FriParameters, TwoAdicFriPcs};
-use p3_goldilocks::Goldilocks;
+use p3_goldilocks::{Goldilocks, Poseidon2Goldilocks};
 use p3_keccak::{Keccak256Hash, KeccakF};
 use p3_matrix::{dense::RowMajorMatrix, Matrix};
 use p3_merkle_tree::MerkleTreeMmcs;
-use p3_symmetric::{CompressionFunctionFromHasher, PaddingFreeSponge, SerializingHasher};
+use p3_symmetric::{CompressionFunctionFromHasher, PaddingFreeSponge, SerializingHasher, TruncatedPermutation};
 use p3_uni_stark::{prove, verify, StarkConfig};
 use tracing::{instrument, info, debug, info_span};
 
@@ -19,22 +19,38 @@ use tracing::{instrument, info, debug, info_span};
 type Val = Goldilocks;
 type Challenge = BinomialExtensionField<Val, 2>;
 
-pub type ByteHash = Keccak256Hash; // Standard Keccak for byte hashing
-pub type U64Hash = PaddingFreeSponge<KeccakF, 25, 17, 4>; // Keccak optimized for field elements
-pub type FieldHash = SerializingHasher<U64Hash>; // Wrapper for field element hashing
-pub type MyCompress = CompressionFunctionFromHasher<U64Hash, 2, 4>;
-pub type ValMmcs = MerkleTreeMmcs<
+// Keccak-based type definitions
+pub type KeccakByteHash = Keccak256Hash;
+pub type KeccakU64Hash = PaddingFreeSponge<KeccakF, 25, 17, 4>;
+pub type KeccakFieldHash = SerializingHasher<KeccakU64Hash>;
+pub type KeccakCompress = CompressionFunctionFromHasher<KeccakU64Hash, 2, 4>;
+pub type KeccakValMmcs = MerkleTreeMmcs<
     [Val; p3_keccak::VECTOR_LEN],
     [u64; p3_keccak::VECTOR_LEN],
-    FieldHash,
-    MyCompress,
+    KeccakFieldHash,
+    KeccakCompress,
     4,
 >;
-pub type ChallengeMmcs = ExtensionMmcs<Val, Challenge, ValMmcs>;
-pub type Dft = Radix2DitParallel<Val>;
-pub type Challenger = SerializingChallenger64<Val, HashChallenger<u8, ByteHash, 32>>;
-pub type Pcs = TwoAdicFriPcs<Val, Dft, ValMmcs, ChallengeMmcs>;
-pub type MyConfig = StarkConfig<Pcs, Challenge, Challenger>;
+pub type KeccakChallengeMmcs = ExtensionMmcs<Val, Challenge, KeccakValMmcs>;
+pub type KeccakChallenger = SerializingChallenger64<Val, HashChallenger<u8, KeccakByteHash, 32>>;
+pub type KeccakPcs = TwoAdicFriPcs<Val, Radix2DitParallel<Val>, KeccakValMmcs, KeccakChallengeMmcs>;
+pub type KeccakConfig = StarkConfig<KeccakPcs, Challenge, KeccakChallenger>;
+
+// Poseidon2-based type definitions  
+pub type Poseidon2Perm = Poseidon2Goldilocks<16>;
+pub type Poseidon2Hash = PaddingFreeSponge<Poseidon2Perm, 16, 8, 8>;
+pub type Poseidon2Compress = TruncatedPermutation<Poseidon2Perm, 2, 8, 16>;
+pub type Poseidon2ValMmcs = MerkleTreeMmcs<
+    <Val as p3_field::Field>::Packing,
+    <Val as p3_field::Field>::Packing,
+    Poseidon2Hash,
+    Poseidon2Compress,
+    8,
+>;
+pub type Poseidon2ChallengeMmcs = ExtensionMmcs<Val, Challenge, Poseidon2ValMmcs>;
+pub type Poseidon2Challenger = DuplexChallenger<Val, Poseidon2Perm, 16, 8>;
+pub type Poseidon2Pcs = TwoAdicFriPcs<Val, Radix2DitParallel<Val>, Poseidon2ValMmcs, Poseidon2ChallengeMmcs>;
+pub type Poseidon2Config = StarkConfig<Poseidon2Pcs, Challenge, Poseidon2Challenger>;
 
 #[derive(Clone)]
 pub struct FibLikeAir {
@@ -89,7 +105,7 @@ impl<AB: AirBuilder> Air<AB> for FibLikeAir {
 
 pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>, Val) {
     debug!("Starting trace generation: {} steps, {} columns", num_steps, num_col);
-    let mut rng = test_rng();
+    let mut rng = SmallRng::seed_from_u64(123);
     assert!(num_steps.is_power_of_two());
     assert!(num_col >= 2, "num_col must be at least 2");
 
@@ -144,10 +160,10 @@ pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>,
     (trace, final_result)
 }
 
-#[instrument(level = "info", fields(num_steps, num_col))]
-pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
+#[instrument(level = "info", fields(num_steps, num_col, hash_type = "keccak"))]
+pub fn run_example_keccak(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
     info!(
-        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps",
+        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Keccak",
         num_col - 1,
         num_col,
         num_steps
@@ -156,15 +172,15 @@ pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
-    // Set up cryptography like in fib_air test
-    let byte_hash = ByteHash {};
-    let u64_hash = U64Hash::new(KeccakF {});
-    let compress = MyCompress::new(u64_hash);
+    // Set up Keccak-based cryptography
+    let byte_hash = KeccakByteHash {};
+    let u64_hash = KeccakU64Hash::new(KeccakF {});
+    let compress = KeccakCompress::new(u64_hash);
 
-    let field_hash = FieldHash::new(u64_hash);
-    let val_mmcs = ValMmcs::new(field_hash, compress);
-    let challenge_mmcs = ChallengeMmcs::new(val_mmcs.clone());
-    let dft = Dft::default();
+    let field_hash = KeccakFieldHash::new(u64_hash);
+    let val_mmcs = KeccakValMmcs::new(field_hash, compress);
+    let challenge_mmcs = KeccakChallengeMmcs::new(val_mmcs.clone());
+    let dft = Radix2DitParallel::<Val>::default();
 
     let fri_params = FriParameters {
         log_blowup: 3,
@@ -174,10 +190,67 @@ pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::
         mmcs: challenge_mmcs,
     };
 
-    let pcs = Pcs::new(dft, val_mmcs, fri_params);
-    let challenger = Challenger::from_hasher(vec![], byte_hash);
+    let pcs = KeccakPcs::new(dft, val_mmcs, fri_params);
+    let challenger = KeccakChallenger::from_hasher(vec![], byte_hash);
 
-    let config = MyConfig::new(pcs, challenger);
+    let config = KeccakConfig::new(pcs, challenger);
+    let air = FibLikeAir {
+        final_result,
+        num_col,
+    };
+
+    info!("Starting proof generation");
+    let proof = info_span!("prove", num_steps = num_steps)
+        .in_scope(|| prove(&config, &air, trace, &vec![]));
+    info!("Proof generated successfully!");
+
+    info!("Starting proof verification");
+    match verify(&config, &air, &proof, &vec![]) {
+        Ok(()) => {
+            info!("Proof verified successfully!");
+            Ok(())
+        }
+        Err(e) => {
+            info!("Proof verification failed: {:?}", e);
+            Err(format!("Verification failed: {:?}", e).into())
+        }
+    }
+}
+
+#[instrument(level = "info", fields(num_steps, num_col, hash_type = "poseidon2"))]
+pub fn run_example_poseidon2(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
+    info!(
+        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Poseidon2",
+        num_col - 1,
+        num_col,
+        num_steps
+    );
+
+    let (trace, final_result) = generate_trace(num_steps, num_col);
+    println!("Trace size: {}x{}", trace.height(), trace.width());
+
+    // Set up Poseidon2-based cryptography  
+    let mut rng = SmallRng::seed_from_u64(42);
+    let perm = Poseidon2Perm::new_from_rng_128(&mut rng);
+    let poseidon2_hash = Poseidon2Hash::new(perm.clone());
+    let compress = Poseidon2Compress::new(perm.clone());
+    
+    let val_mmcs = Poseidon2ValMmcs::new(poseidon2_hash, compress);
+    let challenge_mmcs = Poseidon2ChallengeMmcs::new(val_mmcs.clone());
+    let dft = Radix2DitParallel::<Val>::default();
+
+    let fri_params = FriParameters {
+        log_blowup: 3,
+        log_final_poly_len: 1,
+        num_queries: 100,
+        proof_of_work_bits: 1,
+        mmcs: challenge_mmcs,
+    };
+
+    let pcs = Poseidon2Pcs::new(dft, val_mmcs, fri_params);
+    let challenger = Poseidon2Challenger::new(perm);
+
+    let config = Poseidon2Config::new(pcs, challenger);
     let air = FibLikeAir {
         final_result,
         num_col,
@@ -206,13 +279,23 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_power8_gate_small() {
-        run_example(16, 3).expect("Small power8 gate test failed");
+    fn test_power8_gate_small_keccak() {
+        run_example_keccak(16, 3).expect("Small power8 gate test with Keccak failed");
     }
 
     #[test]
-    fn test_power8_gate_medium() {
-        run_example(256, 4).expect("Medium power8 gate test failed");
+    fn test_power8_gate_medium_keccak() {
+        run_example_keccak(256, 4).expect("Medium power8 gate test with Keccak failed");
+    }
+
+    #[test]
+    fn test_power8_gate_small_poseidon2() {
+        run_example_poseidon2(16, 3).expect("Small power8 gate test with Poseidon2 failed");
+    }
+
+    #[test]
+    fn test_power8_gate_medium_poseidon2() {
+        run_example_poseidon2(256, 4).expect("Medium power8 gate test with Poseidon2 failed");
     }
 
     #[test]

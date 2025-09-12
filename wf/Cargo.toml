@@ -13,3 +13,4 @@ winterfell = { workspace = true }
 core-utils = { workspace = true }
 tracing = { workspace = true }
 rayon = "1.8"
+miden-crypto = { path = "../../crypto/miden-crypto" }

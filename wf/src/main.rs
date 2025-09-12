@@ -1,4 +1,4 @@
-use wf::run_example;
+use wf::{run_example_blake256, run_example_blake192, run_example_rpo};
 use std::env;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -7,6 +7,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap_or_else(|_| "8".to_string())
         .parse::<usize>()
         .unwrap_or(8);
+    
+    // Get hash function type from environment or use default (both)
+    let hash_type = env::var("HASH_TYPE")
+        .unwrap_or_else(|_| "both".to_string())
+        .to_lowercase();
     
     println!("Using {} threads", num_threads);
     
@@ -22,7 +27,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let num_steps = 1 << log_num_steps;
         for num_col in [40, 80].iter() {
             println!("Number of steps: {}, Columns: {}", num_steps, num_col);
-            run_example(num_steps, *num_col)?;
+            
+            match hash_type.as_str() {
+                "blake192" => {
+                    println!("Running with Blake3_192 hash function");
+                    run_example_blake192(num_steps, *num_col)?;
+                }
+                "rpo" => {
+                    println!("Running with RPO hash function");
+                    run_example_rpo(num_steps, *num_col)?;
+                }
+                "both" | _ => {
+                    println!("Running with Blake3_192 hash function");
+                    run_example_blake192(num_steps, *num_col)?;
+                    println!("Running with RPO hash function");
+                    run_example_rpo(num_steps, *num_col)?;
+                }
+            }
         }
     }
 
