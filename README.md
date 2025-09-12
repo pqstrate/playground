@@ -13,3 +13,4 @@ RAYON_NUM_THREADS=1 cargo run --release
 cd p3
 RAYON_NUM_THREADS=1 cargo run --release
 ```
+

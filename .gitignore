@@ -25,3 +25,6 @@ stdlib/assets/std.masl
 
 # mdBook
 book/
+
+# logs
+*.log

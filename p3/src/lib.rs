@@ -1,4 +1,4 @@
-use ark_std::{end_timer, rand::RngCore, start_timer, test_rng};
+use ark_std::{rand::RngCore, test_rng};
 use p3_air::{Air, AirBuilder, BaseAir};
 use p3_challenger::{HashChallenger, SerializingChallenger64};
 use p3_commit::ExtensionMmcs;
@@ -12,7 +12,7 @@ use p3_matrix::{dense::RowMajorMatrix, Matrix};
 use p3_merkle_tree::MerkleTreeMmcs;
 use p3_symmetric::{CompressionFunctionFromHasher, PaddingFreeSponge, SerializingHasher};
 use p3_uni_stark::{prove, verify, StarkConfig};
-use tracing::instrument;
+use tracing::{instrument, info, debug, info_span};
 
 // TRACE_WIDTH is now dynamic based on num_col
 
@@ -88,6 +88,7 @@ impl<AB: AirBuilder> Air<AB> for FibLikeAir {
 }
 
 pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>, Val) {
+    debug!("Starting trace generation: {} steps, {} columns", num_steps, num_col);
     let mut rng = test_rng();
     assert!(num_steps.is_power_of_two());
     assert!(num_col >= 2, "num_col must be at least 2");
@@ -137,18 +138,15 @@ pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>,
 
     let final_result = values[values.len() - num_col]; // First element of last row
     let trace = RowMajorMatrix::new(values, num_col);
-    println!(
-        "Trace generated with {} rows, {} cols",
-        trace.height(),
-        trace.width()
-    );
+    info!("Trace generated with {} rows, {} cols", trace.height(), trace.width());
+    debug!("Final result: {}", final_result);
 
     (trace, final_result)
 }
 
-#[instrument]
+#[instrument(level = "info", fields(num_steps, num_col))]
 pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
-    println!(
+    info!(
         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps",
         num_col - 1,
         num_col,
@@ -156,7 +154,6 @@ pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::
     );
 
     let (trace, final_result) = generate_trace(num_steps, num_col);
-    // println!("Final result: {}", final_result);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
     // Set up cryptography like in fib_air test
@@ -176,7 +173,6 @@ pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::
         proof_of_work_bits: 1,
         mmcs: challenge_mmcs,
     };
-    // println!("FRI params: {:?}", fri_params);
 
     let pcs = Pcs::new(dft, val_mmcs, fri_params);
     let challenger = Challenger::from_hasher(vec![], byte_hash);
@@ -187,18 +183,19 @@ pub fn run_example(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::
         num_col,
     };
 
-    let timer = start_timer!(|| format!("proving for {} steps", num_steps));
-    let proof = prove(&config, &air, trace, &vec![]);
-    end_timer!(timer);
-    println!("Proof generated successfully!");
+    info!("Starting proof generation");
+    let proof = info_span!("prove", num_steps = num_steps)
+        .in_scope(|| prove(&config, &air, trace, &vec![]));
+    info!("Proof generated successfully!");
 
+    info!("Starting proof verification");
     match verify(&config, &air, &proof, &vec![]) {
         Ok(()) => {
-            println!("Proof verified successfully!");
+            info!("Proof verified successfully!");
             Ok(())
         }
         Err(e) => {
-            println!("Proof verification failed: {:?}", e);
+            info!("Proof verification failed: {:?}", e);
             Err(format!("Verification failed: {:?}", e).into())
         }
     }
