@@ -514,7 +514,6 @@ dependencies = [
 name = "p3-fri"
 version = "0.3.0"
 dependencies = [
- "ark-std",
  "itertools",
  "p3-challenger",
  "p3-commit",
@@ -637,7 +636,6 @@ dependencies = [
 name = "p3-uni-stark"
 version = "0.3.0"
 dependencies = [
- "ark-std",
  "itertools",
  "p3-air",
  "p3-challenger",
