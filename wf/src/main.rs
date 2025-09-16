@@ -37,11 +37,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     println!("Running with RPO hash function");
                     run_example_rpo(num_steps, *num_col)?;
                 }
-                "both" | _ => {
+                _ => {
                     println!("Running with Blake3_192 hash function");
                     run_example_blake192(num_steps, *num_col)?;
-                    println!("Running with RPO hash function");
-                    run_example_rpo(num_steps, *num_col)?;
                 }
             }
         }

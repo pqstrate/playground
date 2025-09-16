@@ -2,7 +2,7 @@ use ark_std::{end_timer, rand::RngCore, start_timer, test_rng};
 use std::marker::PhantomData;
 use winterfell::{
     crypto::{DefaultRandomCoin, ElementHasher, MerkleTree, Hasher, Digest},
-    math::{fields::f128::BaseElement, FieldElement},
+    math::{fields::f128::BaseElement, FieldElement, StarkField},
     matrix::ColMatrix,
     Air, AirContext, Assertion, AuxRandElements, BatchingMethod, CompositionPoly,
     CompositionPolyTrace, ConstraintCompositionCoefficients, DefaultConstraintCommitment,
@@ -10,6 +10,7 @@ use winterfell::{
     ProofOptions, Prover, StarkDomain, Trace, TraceInfo, TracePolyTable, TraceTable,
     TransitionConstraintDegree,
 };
+use core_utils::{Serializable, Deserializable, ByteWriter, ByteReader, DeserializationError};
 use miden_crypto::hash::rpo::Rpo256;
 
 // TRACE_WIDTH is now dynamic based on num_col
@@ -27,14 +28,14 @@ impl Digest for RpoDigest {
     }
 }
 
-impl winterfell::utils::Serializable for RpoDigest {
-    fn write_into<W: winterfell::utils::ByteWriter>(&self, target: &mut W) {
+impl Serializable for RpoDigest {
+    fn write_into<W: ByteWriter>(&self, target: &mut W) {
         target.write_bytes(&self.0);
     }
 }
 
-impl winterfell::utils::Deserializable for RpoDigest {
-    fn read_from<R: winterfell::utils::ByteReader>(source: &mut R) -> Result<Self, winterfell::utils::DeserializationError> {
+impl Deserializable for RpoDigest {
+    fn read_from<R: ByteReader>(source: &mut R) -> Result<Self, DeserializationError> {
         let bytes = source.read_array::<32>()?;
         Ok(RpoDigest(bytes))
     }
@@ -91,8 +92,11 @@ impl ElementHasher for RpoWinterfell {
     where
         E: FieldElement<BaseField = Self::BaseField>,
     {
+        // Convert the elements into a list of base field elements
+        let base_elements = E::slice_as_base_elements(elements);
+        
         let mut bytes = Vec::new();
-        for element in elements {
+        for element in base_elements {
             bytes.extend_from_slice(&element.as_int().to_le_bytes());
         }
         let digest = Rpo256::hash(&bytes);

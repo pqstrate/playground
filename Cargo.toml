@@ -1,7 +1,8 @@
 [workspace]
 members = [
     "p3", 
-    "wf"
+    "wf",
+    "p3-monty"
 ]
 
 [workspace.dependencies]

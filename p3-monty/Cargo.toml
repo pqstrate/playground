@@ -1,0 +1,36 @@
+[package]
+name = "p3-monty"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "p3_monty_demo"
+path = "src/main.rs"
+
+[dependencies]
+ark-std = { workspace = true }
+p3-air = { workspace = true }
+p3-challenger = { workspace = true }
+p3-commit = { workspace = true }
+p3-dft = { workspace = true }
+p3-field = { workspace = true }
+p3-fri = { workspace = true }
+p3-interpolation = { workspace = true }
+p3-keccak = { workspace = true }
+p3-matrix = { workspace = true }
+p3-merkle-tree = { workspace = true }
+p3-poseidon2 = { workspace = true }
+p3-symmetric = { workspace = true }
+p3-uni-stark = { workspace = true }
+p3-util = { workspace = true }
+rand = { workspace = true }
+rayon = "1.8"
+tracing = { workspace = true }
+tracing-attributes = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+atty = "0.2"
+
+# Use goldilocks-monty from local path
+p3-goldilocks-monty = { path = "../../Plonky3/goldilocks-monty" }
+# Also include regular goldilocks for comparison
+p3-goldilocks = { workspace = true }
