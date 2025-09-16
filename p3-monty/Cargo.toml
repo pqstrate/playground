@@ -32,5 +32,3 @@ atty = "0.2"
 
 # Use goldilocks-monty from local path
 p3-goldilocks-monty = { path = "../../Plonky3/goldilocks-monty" }
-# Also include regular goldilocks for comparison
-p3-goldilocks = { workspace = true }

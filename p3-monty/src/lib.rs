@@ -6,7 +6,7 @@ use p3_dft::Radix2DitParallel;
 use p3_field::extension::BinomialExtensionField;
 use p3_field::PrimeCharacteristicRing;
 use p3_fri::{FriParameters, TwoAdicFriPcs};
-use p3_goldilocks_monty::{GoldilocksMonty, Poseidon2GoldilocksMonty};
+use p3_goldilocks_monty::{Goldilocks, Poseidon2Goldilocks};
 use p3_keccak::{Keccak256Hash, KeccakF};
 use p3_matrix::{dense::RowMajorMatrix, Matrix};
 use p3_merkle_tree::MerkleTreeMmcs;
@@ -16,7 +16,7 @@ use tracing::{instrument, info, debug, info_span};
 
 // TRACE_WIDTH is now dynamic based on num_col
 
-type Val = GoldilocksMonty;
+type Val = Goldilocks;
 type Challenge = BinomialExtensionField<Val, 2>;
 
 // Keccak-based type definitions
@@ -37,7 +37,7 @@ pub type KeccakPcs = TwoAdicFriPcs<Val, Radix2DitParallel<Val>, KeccakValMmcs, K
 pub type KeccakConfig = StarkConfig<KeccakPcs, Challenge, KeccakChallenger>;
 
 // Poseidon2-based type definitions  
-pub type Poseidon2Perm = Poseidon2GoldilocksMonty<16>;
+pub type Poseidon2Perm = Poseidon2Goldilocks<16>;
 pub type Poseidon2Hash = PaddingFreeSponge<Poseidon2Perm, 16, 8, 8>;
 pub type Poseidon2Compress = TruncatedPermutation<Poseidon2Perm, 2, 8, 16>;
 pub type Poseidon2ValMmcs = MerkleTreeMmcs<

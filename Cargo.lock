@@ -552,10 +552,9 @@ dependencies = [
  "p3-dft",
  "p3-field",
  "p3-mds",
+ "p3-monty-64",
  "p3-poseidon2",
  "p3-symmetric",
- "p3-util",
- "paste",
  "rand 0.9.2",
  "serde",
 ]
@@ -640,7 +639,6 @@ dependencies = [
  "p3-dft",
  "p3-field",
  "p3-fri",
- "p3-goldilocks",
  "p3-goldilocks-monty",
  "p3-interpolation",
  "p3-keccak",
@@ -655,6 +653,18 @@ dependencies = [
  "tracing",
  "tracing-attributes",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "p3-monty-64"
+version = "0.3.0"
+dependencies = [
+ "num-bigint",
+ "p3-field",
+ "p3-util",
+ "paste",
+ "rand 0.9.2",
+ "serde",
 ]
 
 [[package]]
