@@ -25,7 +25,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize tracing subscriber for logging/benchmarking with span traces
     tracing_subscriber::fmt()
         .with_target(true)
-        .with_thread_ids(true)
+        .with_thread_ids(false)
         .with_level(true)
         .with_span_events(tracing_subscriber::fmt::format::FmtSpan::CLOSE)
         .with_ansi(atty::is(atty::Stream::Stdout))

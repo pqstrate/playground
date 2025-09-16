@@ -431,6 +431,7 @@ dependencies = [
  "ark-std",
  "atty",
  "p3-air",
+ "p3-blake3",
  "p3-challenger",
  "p3-commit",
  "p3-dft",
@@ -458,6 +459,15 @@ version = "0.3.0"
 dependencies = [
  "p3-field",
  "p3-matrix",
+]
+
+[[package]]
+name = "p3-blake3"
+version = "0.3.0"
+dependencies = [
+ "blake3",
+ "p3-symmetric",
+ "p3-util",
 ]
 
 [[package]]
@@ -514,6 +524,7 @@ dependencies = [
 name = "p3-fri"
 version = "0.3.0"
 dependencies = [
+ "ark-std",
  "itertools",
  "p3-challenger",
  "p3-commit",
@@ -540,21 +551,6 @@ dependencies = [
  "p3-symmetric",
  "p3-util",
  "paste",
- "rand 0.9.2",
- "serde",
-]
-
-[[package]]
-name = "p3-goldilocks-monty"
-version = "0.3.0"
-dependencies = [
- "num-bigint",
- "p3-dft",
- "p3-field",
- "p3-mds",
- "p3-monty-64",
- "p3-poseidon2",
- "p3-symmetric",
  "rand 0.9.2",
  "serde",
 ]
@@ -628,46 +624,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "p3-monty"
-version = "0.1.0"
-dependencies = [
- "ark-std",
- "atty",
- "p3-air",
- "p3-challenger",
- "p3-commit",
- "p3-dft",
- "p3-field",
- "p3-fri",
- "p3-goldilocks-monty",
- "p3-interpolation",
- "p3-keccak",
- "p3-matrix",
- "p3-merkle-tree",
- "p3-poseidon2",
- "p3-symmetric",
- "p3-uni-stark",
- "p3-util",
- "rand 0.9.2",
- "rayon",
- "tracing",
- "tracing-attributes",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "p3-monty-64"
-version = "0.3.0"
-dependencies = [
- "num-bigint",
- "p3-field",
- "p3-util",
- "paste",
- "rand 0.9.2",
- "serde",
-]
-
-[[package]]
 name = "p3-poseidon2"
 version = "0.3.0"
 dependencies = [
@@ -691,6 +647,7 @@ dependencies = [
 name = "p3-uni-stark"
 version = "0.3.0"
 dependencies = [
+ "ark-std",
  "itertools",
  "p3-air",
  "p3-challenger",

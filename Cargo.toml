@@ -2,7 +2,7 @@
 members = [
     "p3", 
     "wf",
-    "p3-monty"
+    # "p3-monty"
 ]
 
 [workspace.dependencies]
@@ -29,6 +29,7 @@ p3-keccak = "0.3.0"
 p3-matrix = "0.3.0"
 p3-merkle-tree = "0.3.0"
 p3-poseidon2 = "0.3.0"
+p3-blake3 = "0.3.0"
 p3-symmetric = "0.3.0"
 p3-uni-stark = { version = "0.3.0", features = ["parallel"] }
 p3-util = { version = "0.3.0", features = ["parallel"] }
@@ -51,6 +52,7 @@ p3-keccak = { path = "../Plonky3/keccak" }
 p3-matrix = { path = "../Plonky3/matrix" }
 p3-merkle-tree = { path = "../Plonky3/merkle-tree" }
 p3-poseidon2 = { path = "../Plonky3/poseidon2" }
+p3-blake3 = { path = "../Plonky3/blake3" }
 p3-symmetric = { path = "../Plonky3/symmetric" }
 p3-uni-stark = { path = "../Plonky3/uni-stark", features = ["parallel"] }
 p3-util = { path = "../Plonky3/util", features = ["parallel"] }

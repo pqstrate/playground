@@ -1,7 +1,9 @@
 use ark_std::{end_timer, rand::RngCore, start_timer, test_rng};
+use core_utils::{ByteReader, ByteWriter, Deserializable, DeserializationError, Serializable};
+use miden_crypto::hash::rpo::Rpo256;
 use std::marker::PhantomData;
 use winterfell::{
-    crypto::{DefaultRandomCoin, ElementHasher, MerkleTree, Hasher, Digest},
+    crypto::{DefaultRandomCoin, Digest, ElementHasher, Hasher, MerkleTree},
     math::{fields::f128::BaseElement, FieldElement, StarkField},
     matrix::ColMatrix,
     Air, AirContext, Assertion, AuxRandElements, BatchingMethod, CompositionPoly,
@@ -10,8 +12,6 @@ use winterfell::{
     ProofOptions, Prover, StarkDomain, Trace, TraceInfo, TracePolyTable, TraceTable,
     TransitionConstraintDegree,
 };
-use core_utils::{Serializable, Deserializable, ByteWriter, ByteReader, DeserializationError};
-use miden_crypto::hash::rpo::Rpo256;
 
 // TRACE_WIDTH is now dynamic based on num_col
 
@@ -43,7 +43,7 @@ impl Deserializable for RpoDigest {
 
 impl Hasher for RpoWinterfell {
     type Digest = RpoDigest;
-    
+
     const COLLISION_RESISTANCE: u32 = 128;
 
     fn hash(bytes: &[u8]) -> Self::Digest {
@@ -94,7 +94,7 @@ impl ElementHasher for RpoWinterfell {
     {
         // Convert the elements into a list of base field elements
         let base_elements = E::slice_as_base_elements(elements);
-        
+
         let mut bytes = Vec::new();
         for element in base_elements {
             bytes.extend_from_slice(&element.as_int().to_le_bytes());
@@ -329,7 +329,10 @@ where
     }
 }
 
-pub fn run_example_blake256(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_example_blake256(
+    num_steps: usize,
+    num_col: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Blake3_256",
         num_col - 1,
@@ -377,7 +380,10 @@ pub fn run_example_blake256(num_steps: usize, num_col: usize) -> Result<(), Box<
     Ok(())
 }
 
-pub fn run_example_blake192(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_example_blake192(
+    num_steps: usize,
+    num_col: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Blake3_192",
         num_col - 1,

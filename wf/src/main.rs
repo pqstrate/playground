@@ -1,5 +1,5 @@
-use wf::{run_example_blake256, run_example_blake192, run_example_rpo};
 use std::env;
+use wf::{run_example_blake192, run_example_blake256, run_example_rpo};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Get number of threads from environment or use default
@@ -7,17 +7,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap_or_else(|_| "8".to_string())
         .parse::<usize>()
         .unwrap_or(8);
-    
+
     // Get hash function type from environment or use default (both)
     let hash_type = env::var("HASH_TYPE")
         .unwrap_or_else(|_| "both".to_string())
         .to_lowercase();
-    
+
     println!("Using {} threads", num_threads);
-    
+
     // Configure thread pool for Winterfell
     std::env::set_var("RAYON_NUM_THREADS", num_threads.to_string());
-    
+
     println!("Sum Constraint STARK Proof Demo (Winterfell)");
     println!("Constraint: x_1^8 + x_2 + ... + x_{{num_col-1}} = x_num_col");
     println!("Transition: next_x1 = current_x_num_col");
@@ -27,7 +27,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let num_steps = 1 << log_num_steps;
         for num_col in [40, 80].iter() {
             println!("Number of steps: {}, Columns: {}", num_steps, num_col);
-            
+
             match hash_type.as_str() {
                 "blake192" => {
                     println!("Running with Blake3_192 hash function");

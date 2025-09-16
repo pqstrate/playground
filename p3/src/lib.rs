@@ -1,6 +1,6 @@
-use rand::{RngCore, SeedableRng, rngs::SmallRng};
 use p3_air::{Air, AirBuilder, BaseAir};
-use p3_challenger::{HashChallenger, SerializingChallenger64, DuplexChallenger};
+use p3_blake3::Blake3;
+use p3_challenger::{DuplexChallenger, HashChallenger, SerializingChallenger64};
 use p3_commit::ExtensionMmcs;
 use p3_dft::Radix2DitParallel;
 use p3_field::extension::BinomialExtensionField;
@@ -10,9 +10,12 @@ use p3_goldilocks::{Goldilocks, Poseidon2Goldilocks};
 use p3_keccak::{Keccak256Hash, KeccakF};
 use p3_matrix::{dense::RowMajorMatrix, Matrix};
 use p3_merkle_tree::MerkleTreeMmcs;
-use p3_symmetric::{CompressionFunctionFromHasher, PaddingFreeSponge, SerializingHasher, TruncatedPermutation};
+use p3_symmetric::{
+    CompressionFunctionFromHasher, PaddingFreeSponge, SerializingHasher, TruncatedPermutation,
+};
 use p3_uni_stark::{prove, verify, StarkConfig};
-use tracing::{instrument, info, debug, info_span};
+use rand::{rngs::SmallRng, RngCore, SeedableRng};
+use tracing::{debug, info, info_span, instrument};
 
 // TRACE_WIDTH is now dynamic based on num_col
 
@@ -36,7 +39,7 @@ pub type KeccakChallenger = SerializingChallenger64<Val, HashChallenger<u8, Kecc
 pub type KeccakPcs = TwoAdicFriPcs<Val, Radix2DitParallel<Val>, KeccakValMmcs, KeccakChallengeMmcs>;
 pub type KeccakConfig = StarkConfig<KeccakPcs, Challenge, KeccakChallenger>;
 
-// Poseidon2-based type definitions  
+// Poseidon2-based type definitions
 pub type Poseidon2Perm = Poseidon2Goldilocks<16>;
 pub type Poseidon2Hash = PaddingFreeSponge<Poseidon2Perm, 16, 8, 8>;
 pub type Poseidon2Compress = TruncatedPermutation<Poseidon2Perm, 2, 8, 16>;
@@ -49,8 +52,19 @@ pub type Poseidon2ValMmcs = MerkleTreeMmcs<
 >;
 pub type Poseidon2ChallengeMmcs = ExtensionMmcs<Val, Challenge, Poseidon2ValMmcs>;
 pub type Poseidon2Challenger = DuplexChallenger<Val, Poseidon2Perm, 16, 8>;
-pub type Poseidon2Pcs = TwoAdicFriPcs<Val, Radix2DitParallel<Val>, Poseidon2ValMmcs, Poseidon2ChallengeMmcs>;
+pub type Poseidon2Pcs =
+    TwoAdicFriPcs<Val, Radix2DitParallel<Val>, Poseidon2ValMmcs, Poseidon2ChallengeMmcs>;
 pub type Poseidon2Config = StarkConfig<Poseidon2Pcs, Challenge, Poseidon2Challenger>;
+
+// Blake3-based type definitions (following merkle-tree benchmark pattern)
+pub type Blake3ByteHash = Blake3;
+pub type Blake3FieldHash = SerializingHasher<Blake3>;
+pub type Blake3Compress = CompressionFunctionFromHasher<Blake3, 2, 32>;
+pub type Blake3ValMmcs = MerkleTreeMmcs<Val, u8, Blake3FieldHash, Blake3Compress, 32>;
+pub type Blake3ChallengeMmcs = ExtensionMmcs<Val, Challenge, Blake3ValMmcs>;
+pub type Blake3Challenger = SerializingChallenger64<Val, HashChallenger<u8, Blake3ByteHash, 32>>;
+pub type Blake3Pcs = TwoAdicFriPcs<Val, Radix2DitParallel<Val>, Blake3ValMmcs, Blake3ChallengeMmcs>;
+pub type Blake3Config = StarkConfig<Blake3Pcs, Challenge, Blake3Challenger>;
 
 #[derive(Clone)]
 pub struct FibLikeAir {
@@ -104,7 +118,10 @@ impl<AB: AirBuilder> Air<AB> for FibLikeAir {
 }
 
 pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>, Val) {
-    debug!("Starting trace generation: {} steps, {} columns", num_steps, num_col);
+    debug!(
+        "Starting trace generation: {} steps, {} columns",
+        num_steps, num_col
+    );
     let mut rng = SmallRng::seed_from_u64(123);
     assert!(num_steps.is_power_of_two());
     assert!(num_col >= 2, "num_col must be at least 2");
@@ -154,14 +171,21 @@ pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>,
 
     let final_result = values[values.len() - num_col]; // First element of last row
     let trace = RowMajorMatrix::new(values, num_col);
-    info!("Trace generated with {} rows, {} cols", trace.height(), trace.width());
+    info!(
+        "Trace generated with {} rows, {} cols",
+        trace.height(),
+        trace.width()
+    );
     debug!("Final result: {}", final_result);
 
     (trace, final_result)
 }
 
 #[instrument(level = "info", fields(num_steps, num_col, hash_type = "keccak"))]
-pub fn run_example_keccak(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_example_keccak(
+    num_steps: usize,
+    num_col: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
     info!(
         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Keccak",
         num_col - 1,
@@ -218,7 +242,10 @@ pub fn run_example_keccak(num_steps: usize, num_col: usize) -> Result<(), Box<dy
 }
 
 #[instrument(level = "info", fields(num_steps, num_col, hash_type = "poseidon2"))]
-pub fn run_example_poseidon2(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_example_poseidon2(
+    num_steps: usize,
+    num_col: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
     info!(
         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Poseidon2",
         num_col - 1,
@@ -229,12 +256,12 @@ pub fn run_example_poseidon2(num_steps: usize, num_col: usize) -> Result<(), Box
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
-    // Set up Poseidon2-based cryptography  
+    // Set up Poseidon2-based cryptography
     let mut rng = SmallRng::seed_from_u64(42);
     let perm = Poseidon2Perm::new_from_rng_128(&mut rng);
     let poseidon2_hash = Poseidon2Hash::new(perm.clone());
     let compress = Poseidon2Compress::new(perm.clone());
-    
+
     let val_mmcs = Poseidon2ValMmcs::new(poseidon2_hash, compress);
     let challenge_mmcs = Poseidon2ChallengeMmcs::new(val_mmcs.clone());
     let dft = Radix2DitParallel::<Val>::default();
@@ -251,6 +278,66 @@ pub fn run_example_poseidon2(num_steps: usize, num_col: usize) -> Result<(), Box
     let challenger = Poseidon2Challenger::new(perm);
 
     let config = Poseidon2Config::new(pcs, challenger);
+    let air = FibLikeAir {
+        final_result,
+        num_col,
+    };
+
+    info!("Starting proof generation");
+    let proof = info_span!("prove", num_steps = num_steps)
+        .in_scope(|| prove(&config, &air, trace, &vec![]));
+    info!("Proof generated successfully!");
+
+    info!("Starting proof verification");
+    match verify(&config, &air, &proof, &vec![]) {
+        Ok(()) => {
+            info!("Proof verified successfully!");
+            Ok(())
+        }
+        Err(e) => {
+            info!("Proof verification failed: {:?}", e);
+            Err(format!("Verification failed: {:?}", e).into())
+        }
+    }
+}
+
+#[instrument(level = "info", fields(num_steps, num_col, hash_type = "blake3"))]
+pub fn run_example_blake3(
+    num_steps: usize,
+    num_col: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
+    info!(
+        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Blake3",
+        num_col - 1,
+        num_col,
+        num_steps
+    );
+
+    let (trace, final_result) = generate_trace(num_steps, num_col);
+    println!("Trace size: {}x{}", trace.height(), trace.width());
+
+    // Set up Blake3-based cryptography
+    let byte_hash = Blake3ByteHash {};
+    let blake3_hash = Blake3 {};
+    let compress = Blake3Compress::new(blake3_hash);
+
+    let field_hash = Blake3FieldHash::new(blake3_hash);
+    let val_mmcs = Blake3ValMmcs::new(field_hash, compress);
+    let challenge_mmcs = Blake3ChallengeMmcs::new(val_mmcs.clone());
+    let dft = Radix2DitParallel::<Val>::default();
+
+    let fri_params = FriParameters {
+        log_blowup: 3,
+        log_final_poly_len: 1,
+        num_queries: 100,
+        proof_of_work_bits: 1,
+        mmcs: challenge_mmcs,
+    };
+
+    let pcs = Blake3Pcs::new(dft, val_mmcs, fri_params);
+    let challenger = Blake3Challenger::from_hasher(vec![], byte_hash);
+
+    let config = Blake3Config::new(pcs, challenger);
     let air = FibLikeAir {
         final_result,
         num_col,
@@ -296,6 +383,16 @@ mod tests {
     #[test]
     fn test_power8_gate_medium_poseidon2() {
         run_example_poseidon2(256, 4).expect("Medium power8 gate test with Poseidon2 failed");
+    }
+
+    #[test]
+    fn test_power8_gate_small_blake3() {
+        run_example_blake3(16, 3).expect("Small power8 gate test with Blake3 failed");
+    }
+
+    #[test]
+    fn test_power8_gate_medium_blake3() {
+        run_example_blake3(256, 4).expect("Medium power8 gate test with Blake3 failed");
     }
 
     #[test]
