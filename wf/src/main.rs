@@ -23,7 +23,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Transition: next_x1 = current_x_num_col");
     println!();
 
-    for &log_num_steps in [16, 20].iter() {
+    for &log_num_steps in [16, 19].iter() {
         let num_steps = 1 << log_num_steps;
         for num_col in [40, 80].iter() {
             println!("Number of steps: {}, Columns: {}", num_steps, num_col);
