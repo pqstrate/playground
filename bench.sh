@@ -71,13 +71,13 @@ RUSTFLAGS="-C target-feature=+avx512f" NUM_THREADS=16 HASH_TYPE=poseidon2 cargo 
 NUM_THREADS=16 HASH_TYPE=poseidon2 cargo run --release --bin p3_demo > 16_thread_p3_poseidon2.log
 
 ######################################
-# WF demos with Blake3_192 hash function
+# WF demos with Blake3_256 hash function
 ######################################
-NUM_THREADS=1 HASH_TYPE=blake192 cargo run --release --bin wf_demo > 1_thread_wf_blake192.log
-# NUM_THREADS=2 HASH_TYPE=blake192 cargo run --release --bin wf_demo > 2_thread_wf_blake192.log
-# NUM_THREADS=4 HASH_TYPE=blake192 cargo run --release --bin wf_demo > 4_thread_wf_blake192.log
-# NUM_THREADS=8 HASH_TYPE=blake192 cargo run --release --bin wf_demo > 8_thread_wf_blake192.log
-NUM_THREADS=16 HASH_TYPE=blake192 cargo run --release --bin wf_demo > 16_thread_wf_blake192.log
+NUM_THREADS=1 HASH_TYPE=blake256 cargo run --release --bin wf_demo > 1_thread_wf_blake256.log
+# NUM_THREADS=2 HASH_TYPE=blake256 cargo run --release --bin wf_demo > 2_thread_wf_blake256.log
+# NUM_THREADS=4 HASH_TYPE=blake256 cargo run --release --bin wf_demo > 4_thread_wf_blake256.log
+# NUM_THREADS=8 HASH_TYPE=blake256 cargo run --release --bin wf_demo > 8_thread_wf_blake256.log
+NUM_THREADS=16 HASH_TYPE=blake256 cargo run --release --bin wf_demo > 16_thread_wf_blake256.log
 
 ######################################
 # WF demos with RPO hash function (super slow)

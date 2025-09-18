@@ -1,5 +1,5 @@
 use std::env;
-use wf::{run_example_blake192, run_example_blake256, run_example_rpo};
+use wf::{run_example_blake256, run_example_rpo};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Get number of threads from environment or use default
@@ -29,17 +29,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("Number of steps: {}, Columns: {}", num_steps, num_col);
 
             match hash_type.as_str() {
-                "blake192" => {
-                    println!("Running with Blake3_192 hash function");
-                    run_example_blake192(num_steps, *num_col)?;
+                "blake256" => {
+                    println!("Running with Blake3_256 hash function");
+                    run_example_blake256(num_steps, *num_col)?;
                 }
                 "rpo" => {
                     println!("Running with RPO hash function");
                     run_example_rpo(num_steps, *num_col)?;
                 }
                 _ => {
-                    println!("Running with Blake3_192 hash function");
-                    run_example_blake192(num_steps, *num_col)?;
+                    println!("Running with Blake3_256 hash function");
+                    run_example_blake256(num_steps, *num_col)?;
                 }
             }
         }
