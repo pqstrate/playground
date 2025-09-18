@@ -345,7 +345,7 @@ pub fn run_example_blake256(
         8,
         0,
         FieldExtension::None,
-        4,
+        2,
         31,
         BatchingMethod::Linear,
         BatchingMethod::Linear,
