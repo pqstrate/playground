@@ -1,0 +1,23 @@
+[package]
+name = "micro-bench"
+version = "0.1.0"
+edition = "2021"
+
+
+
+[dependencies]
+# Common dependencies
+rand = { workspace = true }
+
+# Plonky3 dependencies for LDE and Merkle tree
+p3-challenger = { workspace = true }
+p3-commit = { workspace = true }
+p3-field = { workspace = true }
+p3-goldilocks = { workspace = true }
+p3-dft = { workspace = true }
+p3-merkle-tree = { workspace = true }
+p3-symmetric = { workspace = true }
+p3-blake3 = { workspace = true }
+p3-keccak = { workspace = true }
+p3-matrix = { workspace = true }
+p3-util = { workspace = true }

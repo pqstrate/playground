@@ -27,7 +27,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_target(false)
         .with_thread_ids(false)
         .with_level(true)
-          .with_span_events(tracing_subscriber::fmt::format::FmtSpan::NEW | tracing_subscriber::fmt::format::FmtSpan::CLOSE)
+        .with_span_events(
+            tracing_subscriber::fmt::format::FmtSpan::NEW
+                | tracing_subscriber::fmt::format::FmtSpan::CLOSE,
+        )
         .with_ansi(atty::is(atty::Stream::Stdout))
         .with_max_level(tracing::Level::DEBUG)
         .compact()

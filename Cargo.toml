@@ -2,6 +2,7 @@
 members = [
     "p3", 
     "wf",
+    "micro-bench",
     # "p3-monty"
 ]
 
@@ -9,6 +10,7 @@ members = [
 ark-std = { version = "0.5.0", features = [ "print-trace" ] }
 # ark-std = "0.5.0"
 rand = { version = "0.9", features = ["small_rng"] }
+criterion = "0.5"
 
 
 # winterfell dependencies - using crates.io versions
