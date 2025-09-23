@@ -318,6 +318,7 @@ checksum = "32a282da65faaf38286cf3be983213fcf1d2e2a58700e808f83f4ea9a4804bc0"
 name = "micro-bench"
 version = "0.1.0"
 dependencies = [
+ "atty",
  "p3-blake3",
  "p3-challenger",
  "p3-commit",
@@ -330,6 +331,12 @@ dependencies = [
  "p3-symmetric",
  "p3-util",
  "rand 0.9.2",
+ "rayon",
+ "tracing",
+ "tracing-attributes",
+ "tracing-subscriber",
+ "winter-utils",
+ "winterfell",
 ]
 
 [[package]]

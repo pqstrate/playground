@@ -29,22 +29,15 @@ pub fn run_lde_bench() {
     // Create DFT instance
     let dft = Radix2DitParallel::<F>::default();
 
+    let poly_matrix = RowMajorMatrix::new(poly.clone(), 1);
     // Benchmark LDE (Low Degree Extension)
     let start = Instant::now();
 
     // Convert to matrix for LDE
-    let poly_matrix = RowMajorMatrix::new(poly.clone(), 1);
     let _evaluated = dft.dft_batch(poly_matrix);
 
     let lde_time = start.elapsed();
     println!("P3 LDE time: {:?}", lde_time);
-
-    // Simple IDFT benchmark
-    let start = Instant::now();
-    let poly_matrix2 = RowMajorMatrix::new(poly, 1);
-    let _evaluated2 = dft.dft_batch(poly_matrix2);
-    let idft_time = start.elapsed();
-    println!("P3 DFT (simulated IDFT) time: {:?}", idft_time);
 }
 
 pub fn run_merkle_bench() {
@@ -52,21 +45,42 @@ pub fn run_merkle_bench() {
 
     // Generate random data for Merkle tree
     let mut rng = StdRng::seed_from_u64(42);
-    let leaves_bases: Vec<F> = (0..POLY_SIZE)
-        .map(|_| F::from_u64(rng.random::<u64>() & 0x7FFFFFFF)) // Keep positive for safety
-        .collect();
-    let leave_matrix = RowMajorMatrix::new(leaves_bases.clone(), 1);
 
-    // Benchmark Blake3 Merkle tree with simplified type
+    {
+        let leaves_bases: Vec<F> = (0..POLY_SIZE)
+            .map(|_| F::from_u64(rng.random::<u64>() & 0x7FFFFFFF)) // Keep positive for safety
+            .collect();
+        let leave_matrix = RowMajorMatrix::new(leaves_bases, 1);
 
-    let blake3_hash = Blake3 {};
-    let compress = Blake3Compress::new(blake3_hash);
+        // Benchmark Blake3 Merkle tree
+        let blake3_hash = Blake3 {};
+        let compress = Blake3Compress::new(blake3_hash);
 
-    let field_hash = Blake3FieldHash::new(blake3_hash);
-    let val_mmcs = Blake3ValMmcs::new(field_hash, compress);
+        let field_hash = Blake3FieldHash::new(blake3_hash);
+        let val_mmcs = Blake3ValMmcs::new(field_hash, compress);
 
-    let start = Instant::now();
-    let (_commitment, _prover_data) = val_mmcs.commit(vec![leave_matrix]);
-    let blake3_commit_time = start.elapsed();
-    println!("P3 Blake3 Merkle commit time: {:?}", blake3_commit_time);
+        let start = Instant::now();
+        let (_commitment, _prover_data) = val_mmcs.commit(vec![leave_matrix]);
+        let blake3_commit_time = start.elapsed();
+        println!("P3 Blake3 Merkle commit time: {:?}", blake3_commit_time);
+    }
+
+    {
+        let leaves_bases: Vec<F> = (0..POLY_SIZE * 80)
+            .map(|_| F::from_u64(rng.random::<u64>() & 0x7FFFFFFF)) // Keep positive for safety
+            .collect();
+        let leave_matrix = RowMajorMatrix::new(leaves_bases, 80);
+
+        // Benchmark Blake3 Merkle tree
+        let blake3_hash = Blake3 {};
+        let compress = Blake3Compress::new(blake3_hash);
+
+        let field_hash = Blake3FieldHash::new(blake3_hash);
+        let val_mmcs = Blake3ValMmcs::new(field_hash, compress);
+
+        let start = Instant::now();
+        let (_commitment, _prover_data) = val_mmcs.commit(vec![leave_matrix]);
+        let blake3_commit_time = start.elapsed();
+        println!("P3 Blake3 Merkle commit time: {:?}", blake3_commit_time);
+    }
 }

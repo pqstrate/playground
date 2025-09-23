@@ -6,8 +6,6 @@ edition = "2021"
 
 
 [dependencies]
-# Common dependencies
-rand = { workspace = true }
 
 # Plonky3 dependencies for LDE and Merkle tree
 p3-challenger = { workspace = true }
@@ -21,3 +19,15 @@ p3-blake3 = { workspace = true }
 p3-keccak = { workspace = true }
 p3-matrix = { workspace = true }
 p3-util = { workspace = true }
+
+# winterfell dependencies for LDE and Merkle tree
+winterfell = { workspace = true }
+core-utils = { workspace = true }
+
+# Other dependencies
+rayon = "1.8"
+tracing = { workspace = true }
+tracing-attributes = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+atty = "0.2"
+rand = { workspace = true }
