@@ -48,7 +48,7 @@ pub fn run_merkle_bench() {
 
     {
         let leaves_bases: Vec<F> = (0..POLY_SIZE)
-            .map(|_| F::from_u64(rng.random::<u64>() & 0x7FFFFFFF)) // Keep positive for safety
+            .map(|_| F::from_u64(rng.random::<u64>())) // Keep positive for safety
             .collect();
         let leave_matrix = RowMajorMatrix::new(leaves_bases, 1);
 
@@ -67,7 +67,7 @@ pub fn run_merkle_bench() {
 
     {
         let leaves_bases: Vec<F> = (0..POLY_SIZE * 80)
-            .map(|_| F::from_u64(rng.random::<u64>() & 0x7FFFFFFF)) // Keep positive for safety
+            .map(|_| F::from_u64(rng.random::<u64>())) // Keep positive for safety
             .collect();
         let leave_matrix = RowMajorMatrix::new(leaves_bases, 80);
 
