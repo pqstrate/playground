@@ -1,9 +1,7 @@
-use std::env;
-
-mod p3_benchmarks;
-mod wf_benchmarks;
-
+#[cfg(not(target_arch = "wasm32"))]
 fn main() {
+    use std::env;
+
     // Get number of threads from environment or use default
     let num_threads = env::var("NUM_THREADS")
         .unwrap_or_else(|_| "8".to_string())
@@ -35,10 +33,15 @@ fn main() {
         .init();
 
     println!("start p3 benches");
-    p3_benchmarks::run_lde_bench();
-    p3_benchmarks::run_merkle_bench();
+    micro_bench::p3_benchmarks::run_lde_bench();
+    micro_bench::p3_benchmarks::run_merkle_bench();
 
     println!("\nstart wf benches");
-    wf_benchmarks::run_lde_bench();
-    wf_benchmarks::run_merkle_bench();
+    micro_bench::wf_benchmarks::run_lde_bench();
+    micro_bench::wf_benchmarks::run_merkle_bench();
+}
+
+#[cfg(target_arch = "wasm32")]
+fn main() {
+    // WASM doesn't use main function, it uses exported functions
 }

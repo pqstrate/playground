@@ -10,6 +10,7 @@ members = [
 ark-std = { version = "0.5.0", features = [ "print-trace" ] }
 # ark-std = "0.5.0"
 rand = { version = "0.9", features = ["small_rng"] }
+getrandom = { version = "0.2", features = ["js"] }
 criterion = "0.5"
 
 

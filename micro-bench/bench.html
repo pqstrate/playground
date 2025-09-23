@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Micro Bench WASM Benchmarks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .benchmark-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            min-height: 100px;
+        }
+        .timing {
+            font-weight: bold;
+            color: #2196F3;
+        }
+        .run-all {
+            background-color: #FF9800;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Micro Bench WASM Benchmarks</h1>
+        <p>Compare performance of cryptographic operations between Plonky3 and Winterfell libraries in WebAssembly.</p>
+        
+        <div class="run-all">
+            <button id="runAll" onclick="runAllBenchmarks()">Run All Benchmarks</button>
+            <button id="clearResults" onclick="clearAllResults()">Clear Results</button>
+        </div>
+
+        <div class="benchmark-section">
+            <h3>Plonky3 Low Degree Extension (LDE)</h3>
+            <button onclick="runBenchmark('p3_lde')" id="p3_lde_btn">Run P3 LDE Benchmark</button>
+            <div id="p3_lde_results" class="results">Click "Run P3 LDE Benchmark" to start...</div>
+        </div>
+
+        <div class="benchmark-section">
+            <h3>Plonky3 Merkle Tree Commitment</h3>
+            <button onclick="runBenchmark('p3_merkle')" id="p3_merkle_btn">Run P3 Merkle Benchmark</button>
+            <div id="p3_merkle_results" class="results">Click "Run P3 Merkle Benchmark" to start...</div>
+        </div>
+
+        <div class="benchmark-section">
+            <h3>Winterfell Low Degree Extension (LDE)</h3>
+            <button onclick="runBenchmark('wf_lde')" id="wf_lde_btn">Run WF LDE Benchmark</button>
+            <div id="wf_lde_results" class="results">Click "Run WF LDE Benchmark" to start...</div>
+        </div>
+
+        <div class="benchmark-section">
+            <h3>Winterfell Merkle Tree Commitment</h3>
+            <button onclick="runBenchmark('wf_merkle')" id="wf_merkle_btn">Run WF Merkle Benchmark</button>
+            <div id="wf_merkle_results" class="results">Click "Run WF Merkle Benchmark" to start...</div>
+        </div>
+
+        <div class="benchmark-section">
+            <h3>Summary</h3>
+            <div id="summary" class="results">Run benchmarks to see timing comparisons...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import init, { bench_p3_lde, bench_p3_merkle, bench_wf_lde, bench_wf_merkle } from './pkg/micro_bench.js';
+
+        let wasmModule;
+        let benchmarkResults = {};
+
+        async function initWasm() {
+            try {
+                wasmModule = await init();
+                console.log('WASM module loaded successfully');
+                
+                // Enable buttons once WASM is loaded
+                document.querySelectorAll('button').forEach(btn => {
+                    btn.disabled = false;
+                });
+            } catch (error) {
+                console.error('Failed to load WASM module:', error);
+                document.body.innerHTML = '<div class="container"><h1>Error</h1><p>Failed to load WASM module. Please ensure the WASM files are properly served.</p></div>';
+            }
+        }
+
+        window.runBenchmark = async function(benchmarkType) {
+            const button = document.getElementById(`${benchmarkType}_btn`);
+            const resultsDiv = document.getElementById(`${benchmarkType}_results`);
+            
+            button.disabled = true;
+            resultsDiv.innerHTML = '<div class="loading">Running benchmark...</div>';
+            
+            try {
+                let startTime = performance.now();
+                let wasmTime;
+                
+                switch(benchmarkType) {
+                    case 'p3_lde':
+                        wasmTime = bench_p3_lde();
+                        break;
+                    case 'p3_merkle':
+                        wasmTime = bench_p3_merkle();
+                        break;
+                    case 'wf_lde':
+                        wasmTime = bench_wf_lde();
+                        break;
+                    case 'wf_merkle':
+                        wasmTime = bench_wf_merkle();
+                        break;
+                }
+                
+                let totalTime = performance.now() - startTime;
+                
+                benchmarkResults[benchmarkType] = {
+                    wasmTime: wasmTime,
+                    totalTime: totalTime
+                };
+                
+                resultsDiv.innerHTML = `
+                    <div class="timing">Total time (JS + WASM): ${totalTime.toFixed(2)}ms</div>
+                    <div class="timing">WASM internal time: ${wasmTime.toFixed(2)}ms</div>
+                    <div>Overhead: ${(totalTime - wasmTime).toFixed(2)}ms</div>
+                `;
+                
+                updateSummary();
+            } catch (error) {
+                resultsDiv.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+                console.error('Benchmark error:', error);
+            }
+            
+            button.disabled = false;
+        };
+
+        window.runAllBenchmarks = async function() {
+            const runAllBtn = document.getElementById('runAll');
+            runAllBtn.disabled = true;
+            runAllBtn.textContent = 'Running...';
+            
+            const benchmarks = ['p3_lde', 'p3_merkle', 'wf_lde', 'wf_merkle'];
+            
+            for (const benchmark of benchmarks) {
+                await runBenchmark(benchmark);
+                // Small delay between benchmarks
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            
+            runAllBtn.disabled = false;
+            runAllBtn.textContent = 'Run All Benchmarks';
+        };
+
+        window.clearAllResults = function() {
+            benchmarkResults = {};
+            const resultDivs = ['p3_lde_results', 'p3_merkle_results', 'wf_lde_results', 'wf_merkle_results', 'summary'];
+            resultDivs.forEach(id => {
+                const div = document.getElementById(id);
+                if (id === 'summary') {
+                    div.innerHTML = 'Run benchmarks to see timing comparisons...';
+                } else {
+                    div.innerHTML = `Click "${document.getElementById(id.replace('_results', '_btn')).textContent}" to start...`;
+                }
+            });
+        };
+
+        function updateSummary() {
+            const summaryDiv = document.getElementById('summary');
+            
+            if (Object.keys(benchmarkResults).length === 0) {
+                summaryDiv.innerHTML = 'Run benchmarks to see timing comparisons...';
+                return;
+            }
+            
+            let summaryText = 'Benchmark Results Summary:\n\n';
+            
+            Object.entries(benchmarkResults).forEach(([type, result]) => {
+                const displayName = type.replace('_', ' ').toUpperCase();
+                summaryText += `${displayName}: ${result.wasmTime.toFixed(2)}ms\n`;
+            });
+            
+            // Compare P3 vs WF if both LDE results are available
+            if (benchmarkResults.p3_lde && benchmarkResults.wf_lde) {
+                const p3Time = benchmarkResults.p3_lde.wasmTime;
+                const wfTime = benchmarkResults.wf_lde.wasmTime;
+                const ratio = (p3Time / wfTime).toFixed(2);
+                summaryText += `\nLDE Comparison:\n`;
+                summaryText += `P3 vs WF ratio: ${ratio}x ${p3Time > wfTime ? '(WF faster)' : '(P3 faster)'}\n`;
+            }
+            
+            // Compare P3 vs WF Merkle if both results are available
+            if (benchmarkResults.p3_merkle && benchmarkResults.wf_merkle) {
+                const p3Time = benchmarkResults.p3_merkle.wasmTime;
+                const wfTime = benchmarkResults.wf_merkle.wasmTime;
+                const ratio = (p3Time / wfTime).toFixed(2);
+                summaryText += `\nMerkle Comparison:\n`;
+                summaryText += `P3 vs WF ratio: ${ratio}x ${p3Time > wfTime ? '(WF faster)' : '(P3 faster)'}\n`;
+            }
+            
+            summaryDiv.innerHTML = summaryText;
+        }
+
+        // Initialize WASM when page loads
+        initWasm();
+        
+        // Disable buttons initially
+        document.querySelectorAll('button').forEach(btn => {
+            btn.disabled = true;
+        });
+    </script>
+</body>
+</html>
