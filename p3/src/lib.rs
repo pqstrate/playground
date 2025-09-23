@@ -16,6 +16,73 @@ use p3_symmetric::{
 use p3_uni_stark::{prove, verify, StarkConfig};
 use rand::{rngs::SmallRng, RngCore, SeedableRng};
 use tracing::{debug, info, info_span, instrument};
+use std::time::{Duration, Instant};
+
+#[derive(Debug, Clone)]
+struct DetailedBenchmark {
+    setup_time: Duration,
+    proof_generation_time: Duration,
+    verification_time: Duration,
+    total_time: Duration,
+}
+
+impl DetailedBenchmark {
+    fn new() -> Self {
+        Self {
+            setup_time: Duration::ZERO,
+            proof_generation_time: Duration::ZERO,
+            verification_time: Duration::ZERO,
+            total_time: Duration::ZERO,
+        }
+    }
+    
+    fn format_detailed_report(&self, hash_type: &str, num_steps: usize, num_col: usize) -> String {
+        
+        "".to_string()
+//         format!(
+// "
+// ══════════════════════════════════════════════════════════
+// Detailed STARK Proof Benchmark - {} Hash Function
+// Trace: {} steps × {} columns
+// ══════════════════════════════════════════════════════════
+// ┝━ commit to main trace
+// │  ┝━ extend trace (LDE)                        [included]
+// │  └━ build Merkle tree                         [included]
+// ┝━ build aux trace                              [not used]
+// ┝━ commit to aux trace                          [not used]
+// │  ┝━ extend trace (LDE)                        [not used]
+// │  └━ build Merkle tree                         [not used]
+// ┝━ evaluate_constraints                         [included]
+// ┝━ commit to constraint evaluations             [included]
+// └━ DEEP composition and FRI                     [included]
+// ──────────────────────────────────────────────────────────
+// Setup time:                                     {:>10.3}ms
+// Total proving time:                             {:>10.3}ms
+//   ├─ Instance setup and trace commit            [included]
+//   ├─ Quotient polynomial computation            [included]
+//   ├─ Quotient polynomial commitment             [included]
+//   ├─ Out-of-domain sampling                     [included]
+//   └─ FRI opening proof                          [included]
+// Verification time:                              {:>10.3}ms
+// ══════════════════════════════════════════════════════════
+// Overall total time:                             {:>10.3}ms
+// ══════════════════════════════════════════════════════════
+
+// Note: This implementation uses the original Plonky3 prove() function which
+//       internally handles all phases. The timing breakdown above shows the
+//       conceptual phases that occur during proving, but individual phase
+//       timings are not available without instrumenting the Plonky3 library.
+// ",
+//             hash_type,
+//             num_steps,
+//             num_col,
+//             self.setup_time.as_secs_f64() * 1000.0,
+//             self.proof_generation_time.as_secs_f64() * 1000.0,
+//             self.verification_time.as_secs_f64() * 1000.0,
+//             self.total_time.as_secs_f64() * 1000.0
+//         )
+    }
+}
 
 // TRACE_WIDTH is now dynamic based on num_col
 
@@ -193,10 +260,14 @@ pub fn run_example_keccak(
         num_steps
     );
 
+    let total_start = Instant::now();
+    let mut benchmarks = DetailedBenchmark::new();
+
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
     // Set up Keccak-based cryptography
+    let setup_start = Instant::now();
     let byte_hash = KeccakByteHash {};
     let u64_hash = KeccakU64Hash::new(KeccakF {});
     let compress = KeccakCompress::new(u64_hash);
@@ -222,15 +293,23 @@ pub fn run_example_keccak(
         final_result,
         num_col,
     };
+    benchmarks.setup_time = setup_start.elapsed();
 
     info!("Starting proof generation");
+    let prove_start = Instant::now();
     let proof = info_span!("prove", num_steps = num_steps)
         .in_scope(|| prove(&config, &air, trace, &vec![]));
+    benchmarks.proof_generation_time = prove_start.elapsed();
     info!("Proof generated successfully!");
 
-    info!("Starting proof verification");
+    let verify_start = Instant::now();
     match verify(&config, &air, &proof, &vec![]) {
         Ok(()) => {
+            benchmarks.verification_time = verify_start.elapsed();
+            benchmarks.total_time = total_start.elapsed();
+            
+            println!("{}", benchmarks.format_detailed_report("Keccak", num_steps, num_col));
+            
             info!("Proof verified successfully!");
             Ok(())
         }
@@ -253,10 +332,14 @@ pub fn run_example_poseidon2(
         num_steps
     );
 
+    let total_start = Instant::now();
+    let mut benchmarks = DetailedBenchmark::new();
+
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
     // Set up Poseidon2-based cryptography
+    let setup_start = Instant::now();
     let mut rng = SmallRng::seed_from_u64(42);
     let perm = Poseidon2Perm::new_from_rng_128(&mut rng);
     let poseidon2_hash = Poseidon2Hash::new(perm.clone());
@@ -282,15 +365,23 @@ pub fn run_example_poseidon2(
         final_result,
         num_col,
     };
+    benchmarks.setup_time = setup_start.elapsed();
 
     info!("Starting proof generation");
+    let prove_start = Instant::now();
     let proof = info_span!("prove", num_steps = num_steps)
         .in_scope(|| prove(&config, &air, trace, &vec![]));
+    benchmarks.proof_generation_time = prove_start.elapsed();
     info!("Proof generated successfully!");
 
-    info!("Starting proof verification");
+    let verify_start = Instant::now();
     match verify(&config, &air, &proof, &vec![]) {
         Ok(()) => {
+            benchmarks.verification_time = verify_start.elapsed();
+            benchmarks.total_time = total_start.elapsed();
+            
+            println!("{}", benchmarks.format_detailed_report("Poseidon2", num_steps, num_col));
+            
             info!("Proof verified successfully!");
             Ok(())
         }
@@ -313,10 +404,14 @@ pub fn run_example_blake3(
         num_steps
     );
 
+    let total_start = Instant::now();
+    let mut benchmarks = DetailedBenchmark::new();
+
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
     // Set up Blake3-based cryptography
+    let setup_start = Instant::now();
     let byte_hash = Blake3ByteHash {};
     let blake3_hash = Blake3 {};
     let compress = Blake3Compress::new(blake3_hash);
@@ -342,15 +437,23 @@ pub fn run_example_blake3(
         final_result,
         num_col,
     };
+    benchmarks.setup_time = setup_start.elapsed();
 
     info!("Starting proof generation");
+    let prove_start = Instant::now();
     let proof = info_span!("prove", num_steps = num_steps)
         .in_scope(|| prove(&config, &air, trace, &vec![]));
+    benchmarks.proof_generation_time = prove_start.elapsed();
     info!("Proof generated successfully!");
 
-    info!("Starting proof verification");
+    let verify_start = Instant::now();
     match verify(&config, &air, &proof, &vec![]) {
         Ok(()) => {
+            benchmarks.verification_time = verify_start.elapsed();
+            benchmarks.total_time = total_start.elapsed();
+            
+            println!("{}", benchmarks.format_detailed_report("Blake3", num_steps, num_col));
+            
             info!("Proof verified successfully!");
             Ok(())
         }

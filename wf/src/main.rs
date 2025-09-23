@@ -18,6 +18,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Configure thread pool for Winterfell
     std::env::set_var("RAYON_NUM_THREADS", num_threads.to_string());
 
+    // Initialize tracing subscriber for logging/benchmarking with span traces
+    tracing_subscriber::fmt()
+        .with_target(false)
+        .with_thread_ids(false)
+        .with_level(true)
+        .with_span_events(tracing_subscriber::fmt::format::FmtSpan::NEW | tracing_subscriber::fmt::format::FmtSpan::CLOSE)
+        .with_ansi(atty::is(atty::Stream::Stdout))
+        .with_max_level(tracing::Level::DEBUG)
+        // .compact()
+        .init();
+
     println!("Sum Constraint STARK Proof Demo (Winterfell)");
     println!("Constraint: x_1^8 + x_2 + ... + x_{{num_col-1}} = x_num_col");
     println!("Transition: next_x1 = current_x_num_col");

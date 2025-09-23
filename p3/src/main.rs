@@ -24,11 +24,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Initialize tracing subscriber for logging/benchmarking with span traces
     tracing_subscriber::fmt()
-        .with_target(true)
+        .with_target(false)
         .with_thread_ids(false)
         .with_level(true)
-        .with_span_events(tracing_subscriber::fmt::format::FmtSpan::CLOSE)
+          .with_span_events(tracing_subscriber::fmt::format::FmtSpan::NEW | tracing_subscriber::fmt::format::FmtSpan::CLOSE)
         .with_ansi(atty::is(atty::Stream::Stdout))
+        .with_max_level(tracing::Level::DEBUG)
         .compact()
         .init();
     println!("Sum Constraint STARK Proof Demo (Plonky3)");
@@ -36,9 +37,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Transition: next_x1 = current_x_num_col");
     println!();
 
-    for &log_num_steps in [16, 19].iter() {
+    // for &log_num_steps in [16, 19].iter() {
+
+    for &log_num_steps in [19].iter() {
         let num_steps = 1 << log_num_steps;
-        for &num_col in [40, 80].iter() {
+        // for &num_col in [40, 80].iter() {
+        for &num_col in [80].iter() {
             println!("Number of steps: {}, Columns: {}", num_steps, num_col);
 
             match hash_type.as_str() {
@@ -54,19 +58,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     println!("Running with Blake3 hash function");
                     run_example_blake3(num_steps, num_col)?;
                 }
-                "both" | "all" => {
-                    println!("Running with Keccak hash function");
-                    run_example_keccak(num_steps, num_col)?;
-                    println!("Running with Poseidon2 hash function");
-                    run_example_poseidon2(num_steps, num_col)?;
-                    println!("Running with Blake3 hash function");
-                    run_example_blake3(num_steps, num_col)?;
-                }
                 _ => {
                     println!("Running with Keccak hash function");
                     run_example_keccak(num_steps, num_col)?;
-                    println!("Running with Poseidon2 hash function");
-                    run_example_poseidon2(num_steps, num_col)?;
                 }
             }
         }

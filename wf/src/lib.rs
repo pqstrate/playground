@@ -341,7 +341,7 @@ pub fn run_example_blake256(
     );
 
     let options = ProofOptions::new(
-        28,
+        100,
         8,
         0,
         FieldExtension::None,
@@ -380,56 +380,56 @@ pub fn run_example_blake256(
     Ok(())
 }
 
-pub fn run_example_blake192(
-    num_steps: usize,
-    num_col: usize,
-) -> Result<(), Box<dyn std::error::Error>> {
-    println!(
-        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Blake3_192",
-        num_col - 1,
-        num_col,
-        num_steps
-    );
+// pub fn run_example_blake192(
+//     num_steps: usize,
+//     num_col: usize,
+// ) -> Result<(), Box<dyn std::error::Error>> {
+//     println!(
+//         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Blake3_192",
+//         num_col - 1,
+//         num_col,
+//         num_steps
+//     );
 
-    let options = ProofOptions::new(
-        28,
-        8,
-        0,
-        FieldExtension::None,
-        4,
-        31,
-        BatchingMethod::Linear,
-        BatchingMethod::Linear,
-    );
+//     let options = ProofOptions::new(
+//         28,
+//         8,
+//         0,
+//         FieldExtension::None,
+//         4,
+//         31,
+//         BatchingMethod::Linear,
+//         BatchingMethod::Linear,
+//     );
 
-    let prover =
-        FibLikeProver::<winterfell::crypto::hashers::Blake3_192<BaseElement>>::new(options);
+//     let prover =
+//         FibLikeProver::<winterfell::crypto::hashers::Blake3_192<BaseElement>>::new(options);
 
-    let trace = prover.build_trace(num_steps, num_col);
-    let pub_inputs = prover.get_pub_inputs(&trace);
+//     let trace = prover.build_trace(num_steps, num_col);
+//     let pub_inputs = prover.get_pub_inputs(&trace);
 
-    println!("Trace size: {}x{}", trace.length(), trace.width());
-    let timer = start_timer!(|| format!("proving {} steps", num_steps));
-    let proof = prover.prove(trace)?;
-    end_timer!(timer);
-    println!("Proof generated successfully!");
+//     println!("Trace size: {}x{}", trace.length(), trace.width());
+//     let timer = start_timer!(|| format!("proving {} steps", num_steps));
+//     let proof = prover.prove(trace)?;
+//     end_timer!(timer);
+//     println!("Proof generated successfully!");
 
-    let acceptable_options =
-        winterfell::AcceptableOptions::OptionSet(vec![proof.options().clone()]);
+//     let acceptable_options =
+//         winterfell::AcceptableOptions::OptionSet(vec![proof.options().clone()]);
 
-    match winterfell::verify::<
-        FibLikeAir,
-        winterfell::crypto::hashers::Blake3_192<BaseElement>,
-        DefaultRandomCoin<winterfell::crypto::hashers::Blake3_192<BaseElement>>,
-        MerkleTree<winterfell::crypto::hashers::Blake3_192<BaseElement>>,
-    >(proof, pub_inputs, &acceptable_options)
-    {
-        Ok(()) => println!("Proof verified successfully!"),
-        Err(e) => println!("Proof verification failed: {:?}", e),
-    }
+//     match winterfell::verify::<
+//         FibLikeAir,
+//         winterfell::crypto::hashers::Blake3_192<BaseElement>,
+//         DefaultRandomCoin<winterfell::crypto::hashers::Blake3_192<BaseElement>>,
+//         MerkleTree<winterfell::crypto::hashers::Blake3_192<BaseElement>>,
+//     >(proof, pub_inputs, &acceptable_options)
+//     {
+//         Ok(()) => println!("Proof verified successfully!"),
+//         Err(e) => println!("Proof verification failed: {:?}", e),
+//     }
 
-    Ok(())
-}
+//     Ok(())
+// }
 pub fn run_example_rpo(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using RPO",

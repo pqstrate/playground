@@ -14,3 +14,6 @@ core-utils = { workspace = true }
 tracing = { workspace = true }
 rayon = "1.8"
 miden-crypto = { path = "../../crypto/miden-crypto" }
+tracing-attributes = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+atty = "0.2"
