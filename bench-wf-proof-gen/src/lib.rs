@@ -293,9 +293,9 @@ where
 
     match winterfell::verify::<
         FibLikeAir,
-        winterfell::crypto::hashers::Blake3_256<BaseElement>,
-        DefaultRandomCoin<winterfell::crypto::hashers::Blake3_256<BaseElement>>,
-        MerkleTree<winterfell::crypto::hashers::Blake3_256<BaseElement>>,
+        H,
+        DefaultRandomCoin<H>,
+        MerkleTree<H>,
     >(proof, pub_inputs, &acceptable_options)
     {
         Ok(()) => println!("Proof verified successfully!"),
