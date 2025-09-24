@@ -8,8 +8,8 @@ name = "p3_monty_demo"
 path = "src/main.rs"
 
 [dependencies]
-ark-std = { workspace = true }
 p3-air = { workspace = true }
+p3-blake3 = { workspace = true }
 p3-challenger = { workspace = true }
 p3-commit = { workspace = true }
 p3-dft = { workspace = true }
@@ -23,6 +23,9 @@ p3-poseidon2 = { workspace = true }
 p3-symmetric = { workspace = true }
 p3-uni-stark = { workspace = true }
 p3-util = { workspace = true }
+
+
+ark-std = { workspace = true }
 rand = { workspace = true }
 rayon =  { workspace = true }
 tracing = { workspace = true }
@@ -30,5 +33,4 @@ tracing-attributes = { workspace = true }
 tracing-subscriber = { workspace = true }
 atty = { workspace = true }
 
-# Use goldilocks-monty from local path
 p3-goldilocks-monty = { workspace = true }

@@ -1,4 +1,5 @@
 use rand::{RngCore, SeedableRng, rngs::SmallRng};
+use p3_blake3::Blake3;
 use p3_air::{Air, AirBuilder, BaseAir};
 use p3_challenger::{HashChallenger, SerializingChallenger64, DuplexChallenger};
 use p3_commit::ExtensionMmcs;
@@ -51,6 +52,16 @@ pub type Poseidon2ChallengeMmcs = ExtensionMmcs<Val, Challenge, Poseidon2ValMmcs
 pub type Poseidon2Challenger = DuplexChallenger<Val, Poseidon2Perm, 16, 8>;
 pub type Poseidon2Pcs = TwoAdicFriPcs<Val, Radix2DitParallel<Val>, Poseidon2ValMmcs, Poseidon2ChallengeMmcs>;
 pub type Poseidon2Config = StarkConfig<Poseidon2Pcs, Challenge, Poseidon2Challenger>;
+
+// Blake3-based type definitions (following merkle-tree benchmark pattern)
+pub type Blake3ByteHash = Blake3;
+pub type Blake3FieldHash = SerializingHasher<Blake3>;
+pub type Blake3Compress = CompressionFunctionFromHasher<Blake3, 2, 32>;
+pub type Blake3ValMmcs = MerkleTreeMmcs<Val, u8, Blake3FieldHash, Blake3Compress, 32>;
+pub type Blake3ChallengeMmcs = ExtensionMmcs<Val, Challenge, Blake3ValMmcs>;
+pub type Blake3Challenger = SerializingChallenger64<Val, HashChallenger<u8, Blake3ByteHash, 32>>;
+pub type Blake3Pcs = TwoAdicFriPcs<Val, Radix2DitParallel<Val>, Blake3ValMmcs, Blake3ChallengeMmcs>;
+pub type Blake3Config = StarkConfig<Blake3Pcs, Challenge, Blake3Challenger>;
 
 #[derive(Clone)]
 pub struct FibLikeAir {
@@ -262,6 +273,66 @@ pub fn run_example_poseidon2(num_steps: usize, num_col: usize) -> Result<(), Box
     info!("Proof generated successfully!");
 
     info!("Starting proof verification");
+    match verify(&config, &air, &proof, &vec![]) {
+        Ok(()) => {
+            info!("Proof verified successfully!");
+            Ok(())
+        }
+        Err(e) => {
+            info!("Proof verification failed: {:?}", e);
+            Err(format!("Verification failed: {:?}", e).into())
+        }
+    }
+}
+
+
+#[instrument(level = "info", fields(num_steps, num_col, hash_type = "blake3"))]
+pub fn run_example_blake3(
+    num_steps: usize,
+    num_col: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
+    info!(
+        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Blake3",
+        num_col - 1,
+        num_col,
+        num_steps
+    );
+
+    let (trace, final_result) = generate_trace(num_steps, num_col);
+    println!("Trace size: {}x{}", trace.height(), trace.width());
+
+    // Set up Blake3-based cryptography
+    let byte_hash = Blake3ByteHash {};
+    let blake3_hash = Blake3 {};
+    let compress = Blake3Compress::new(blake3_hash);
+
+    let field_hash = Blake3FieldHash::new(blake3_hash);
+    let val_mmcs = Blake3ValMmcs::new(field_hash, compress);
+    let challenge_mmcs = Blake3ChallengeMmcs::new(val_mmcs.clone());
+    let dft = Radix2DitParallel::<Val>::default();
+
+    let fri_params = FriParameters {
+        log_blowup: 3,
+        log_final_poly_len: 1,
+        num_queries: 100,
+        proof_of_work_bits: 1,
+        mmcs: challenge_mmcs,
+    };
+
+    let pcs = Blake3Pcs::new(dft, val_mmcs, fri_params);
+    let challenger = Blake3Challenger::from_hasher(vec![], byte_hash);
+
+    let config = Blake3Config::new(pcs, challenger);
+    let air = FibLikeAir {
+        final_result,
+        num_col,
+    };
+
+    info!("Starting proof generation");
+    let proof = info_span!("prove", num_steps = num_steps)
+        .in_scope(|| prove(&config, &air, trace, &vec![]));
+    info!("Proof generated successfully!");
+
     match verify(&config, &air, &proof, &vec![]) {
         Ok(()) => {
             info!("Proof verified successfully!");

@@ -1,4 +1,4 @@
-use p3_monty::{run_example_keccak, run_example_poseidon2};
+use p3_monty::{run_example_blake3, run_example_poseidon2};
 use tracing_subscriber;
 use std::env;
 
@@ -36,25 +36,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Transition: next_x1 = current_x_num_col");
     println!();
 
-    for &log_num_steps in [16, 20].iter() {
+    for &log_num_steps in [19].iter() {
         let num_steps = 1 << log_num_steps;
-        for &num_col in [40, 80].iter() {
+        for &num_col in [80].iter() {
             println!("Number of steps: {}, Columns: {}", num_steps, num_col);
             
             match hash_type.as_str() {
-                "keccak" => {
-                    println!("Running with Keccak hash function (GoldilocksMonty simulation)");
-                    run_example_keccak(num_steps, num_col)?;
+                "blake3" => {
+                    println!("Running with Blake3 hash function");
+                    run_example_blake3(num_steps, num_col)?;
                 }
                 "poseidon2" => {
-                    println!("Running with Poseidon2 hash function (GoldilocksMonty simulation)");
+                    println!("Running with Poseidon2 hash function");
                     run_example_poseidon2(num_steps, num_col)?;
                 }
-                "both" | _ => {
-                    println!("Running with Keccak hash function (GoldilocksMonty simulation)");
-                    run_example_keccak(num_steps, num_col)?;
-                    println!("Running with Poseidon2 hash function (GoldilocksMonty simulation)");
-                    run_example_poseidon2(num_steps, num_col)?;
+                _ => {
+                    println!("Running with Blake3 hash function");
+                    run_example_blake3(num_steps, num_col)?;
                 }
             }
         }
