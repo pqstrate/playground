@@ -17,5 +17,5 @@ tracing-subscriber.workspace = true
 atty.workspace = true
 
 
-miden-crypto = { workspace = true, features = [ "concurrent"]}
-winterfell = { workspace = true, features = [ "concurrent"]}
+miden-crypto = { workspace = true, features = [ "concurrent" ] }
+winterfell = { workspace = true, features = [ "concurrent" ] }

@@ -15,7 +15,6 @@ use p3_symmetric::{
 };
 use p3_uni_stark::{prove, verify, StarkConfig};
 use rand::{rngs::SmallRng, RngCore, SeedableRng};
-use std::time::{Duration, Instant};
 use tracing::{debug, info, info_span, instrument};
 
 type Val = Goldilocks;
@@ -192,13 +191,10 @@ pub fn run_example_keccak(
         num_steps
     );
 
-    let total_start = Instant::now();
-
     let (trace, final_result) = generate_trace(num_steps, num_col);
-    println!("Trace size: {}x{}", trace.height(), trace.width());
+    info!("Trace size: {}x{}", trace.height(), trace.width());
 
     // Set up Keccak-based cryptography
-    let setup_start = Instant::now();
     let byte_hash = KeccakByteHash {};
     let u64_hash = KeccakU64Hash::new(KeccakF {});
     let compress = KeccakCompress::new(u64_hash);
@@ -225,12 +221,10 @@ pub fn run_example_keccak(
         num_col,
     };
     info!("Starting proof generation");
-    let prove_start = Instant::now();
     let proof = info_span!("prove", num_steps = num_steps)
         .in_scope(|| prove(&config, &air, trace, &vec![]));
     info!("Proof generated successfully!");
 
-    let verify_start = Instant::now();
     match verify(&config, &air, &proof, &vec![]) {
         Ok(()) => {
             info!("Proof verified successfully!");
@@ -255,12 +249,10 @@ pub fn run_example_poseidon2(
         num_steps
     );
 
-    let total_start = Instant::now();
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
     // Set up Poseidon2-based cryptography
-    let setup_start = Instant::now();
     let mut rng = SmallRng::seed_from_u64(42);
     let perm = Poseidon2Perm::new_from_rng_128(&mut rng);
     let poseidon2_hash = Poseidon2Hash::new(perm.clone());
@@ -288,12 +280,10 @@ pub fn run_example_poseidon2(
     };
 
     info!("Starting proof generation");
-    let prove_start = Instant::now();
     let proof = info_span!("prove", num_steps = num_steps)
         .in_scope(|| prove(&config, &air, trace, &vec![]));
     info!("Proof generated successfully!");
 
-    let verify_start = Instant::now();
     match verify(&config, &air, &proof, &vec![]) {
         Ok(()) => {
             info!("Proof verified successfully!");
@@ -318,12 +308,10 @@ pub fn run_example_blake3(
         num_steps
     );
 
-    let total_start = Instant::now();
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
     // Set up Blake3-based cryptography
-    let setup_start = Instant::now();
     let byte_hash = Blake3ByteHash {};
     let blake3_hash = Blake3 {};
     let compress = Blake3Compress::new(blake3_hash);

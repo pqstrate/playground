@@ -240,6 +240,12 @@ pub fn run_example_blake256(
     num_steps: usize,
     num_col: usize,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    println!(
+        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Blake3_256 hash function",
+        num_col - 1,
+        num_col,
+        num_steps
+    );
     run_example::<winterfell::crypto::hashers::Blake3_256<BaseElement>>(num_steps, num_col)
 }
 
@@ -247,6 +253,12 @@ pub fn run_example_poseidon2(
     num_steps: usize,
     num_col: usize,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    println!(
+        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Poseidon2 hash function",
+        num_col - 1,
+        num_col,
+        num_steps
+    );
     run_example::<miden_crypto::hash::poseidon2::Poseidon2>(num_steps, num_col)
 }
 
@@ -254,13 +266,6 @@ pub fn run_example<H>(num_steps: usize, num_col: usize) -> Result<(), Box<dyn st
 where
     H: ElementHasher<BaseField = BaseElement> + Sync,
 {
-    println!(
-        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Blake3_256",
-        num_col - 1,
-        num_col,
-        num_steps
-    );
-
     let options = ProofOptions::new(
         100,
         8,

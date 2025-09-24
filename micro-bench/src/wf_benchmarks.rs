@@ -1,8 +1,5 @@
-// use rand::rngs::StdRng;
-// use rand::{Rng, SeedableRng};
 use std::{mem::transmute, time::Instant};
 
-use core_utils::Serializable;
 use rayon::{iter::ParallelIterator, slice::ParallelSlice};
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -28,28 +25,15 @@ use winterfell::{
     math::{fft, fields::f64::BaseElement},
 };
 
-#[cfg(target_arch = "wasm32")]
-const POLY_SIZE: usize = 1 << 16; // 2^16 for WASM (smaller for browser performance)
-
-#[cfg(not(target_arch = "wasm32"))]
 const POLY_SIZE: usize = 1 << 19; // 2^19
 
 pub fn run_lde_bench() {
     console_log!("WF LDE Benchmark - Polynomial size: {}", POLY_SIZE);
 
     // Generate polynomial data
-    // #[cfg(target_arch = "wasm32")]
     let mut poly: Vec<BaseElement> = (0..POLY_SIZE)
         .map(|i| BaseElement::new((1u64 << 55) + (i as u64)))
         .collect();
-
-    // #[cfg(not(target_arch = "wasm32"))]
-    // let mut poly: Vec<BaseElement> = {
-    //     let mut rng = StdRng::seed_from_u64(42);
-    //     (0..POLY_SIZE)
-    //         .map(|_| BaseElement::new(rng.random::<u64>()))
-    //         .collect()
-    // };
 
     // Benchmark LDE (Low Degree Extension)
     let start = Instant::now();
@@ -72,7 +56,6 @@ pub fn run_merkle_bench() {
     console_log!("WF Merkle Tree Benchmark - {} leaves", POLY_SIZE);
     {
         // Generate data for Merkle tree
-        // #[cfg(target_arch = "wasm32")]
         let leaves: Vec<_> = (0..POLY_SIZE)
             .map(|i| {
                 let val = (1u64 << 55) + (i as u64);
@@ -83,16 +66,7 @@ pub fn run_merkle_bench() {
             })
             .collect();
 
-        // #[cfg(not(target_arch = "wasm32"))]
-        // let leaves: Vec<_> = {
-        //     let mut rng = StdRng::seed_from_u64(42);
-        //     (0..POLY_SIZE)
-        //         .map(|_| {
-        //             let bytes: [u8; 32] = rng.random();
-        //             Blake3_256::<BaseElement>::hash(&bytes)
-        //         })
-        //         .collect()
-        // };
+     
 
         let start = Instant::now();
         let _tree = MerkleTree::<Blake3_256<BaseElement>>::new(leaves).unwrap();

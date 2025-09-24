@@ -6,8 +6,7 @@ use p3_goldilocks::Goldilocks;
 use p3_matrix::dense::RowMajorMatrix;
 use p3_merkle_tree::MerkleTreeMmcs;
 use p3_symmetric::{CompressionFunctionFromHasher, SerializingHasher};
-// use rand::rngs::StdRng;
-// use rand::{Rng, SeedableRng};
+
 use std::time::Instant;
 
 #[cfg(target_arch = "wasm32")]
@@ -35,28 +34,16 @@ pub type Blake3FieldHash = SerializingHasher<Blake3>;
 pub type Blake3Compress = CompressionFunctionFromHasher<Blake3, 2, 32>;
 pub type Blake3ValMmcs = MerkleTreeMmcs<F, u8, Blake3FieldHash, Blake3Compress, 32>;
 
-#[cfg(target_arch = "wasm32")]
-const POLY_SIZE: usize = 1 << 16; // 2^16 for WASM (smaller for browser performance)
-
-#[cfg(not(target_arch = "wasm32"))]
 const POLY_SIZE: usize = 1 << 19; // 2^19
 
 pub fn run_lde_bench() {
     console_log!("P3 LDE Benchmark - Polynomial size: {}", POLY_SIZE);
 
     // Generate polynomial data
-    // #[cfg(target_arch = "wasm32")]
     let poly: Vec<F> = (0..POLY_SIZE)
         .map(|i| F::from_u64((1u64 << 55) + (i as u64)))
         .collect();
 
-    // #[cfg(not(target_arch = "wasm32"))]
-    // let poly: Vec<F> = {
-    //     let mut rng = StdRng::seed_from_u64(42);
-    //     (0..POLY_SIZE)
-    //         .map(|_| F::from_u64(rng.random::<u64>() & 0x7FFFFFFF))
-    //         .collect()
-    // };
 
     // Create DFT instance
     let dft = Radix2DitParallel::<F>::default();
@@ -76,18 +63,9 @@ pub fn run_merkle_bench() {
     console_log!("P3 Merkle Tree Benchmark - {} leaves", POLY_SIZE);
 
     // Generate data for Merkle tree
-    // #[cfg(target_arch = "wasm32")]
     let leaves_bases: Vec<F> = (0..POLY_SIZE)
         .map(|i| F::from_u64((1u64 << 55) + (i as u64)))
         .collect();
-
-    // #[cfg(not(target_arch = "wasm32"))]
-    // let leaves_bases: Vec<F> = {
-    //     let mut rng = StdRng::seed_from_u64(42);
-    //     (0..POLY_SIZE)
-    //         .map(|_| F::from_u64(rng.random::<u64>()))
-    //         .collect()
-    // };
 
     {
         let leave_matrix = RowMajorMatrix::new(leaves_bases, 1);
@@ -111,13 +89,6 @@ pub fn run_merkle_bench() {
             .map(|i| F::from_u64((1u64 << 55) + (i as u64)))
             .collect();
 
-        // #[cfg(not(target_arch = "wasm32"))]
-        // let leaves_bases: Vec<F> = {
-        //     let mut rng = StdRng::seed_from_u64(42);
-        //     (0..POLY_SIZE * 80)
-        //         .map(|_| F::from_u64(rng.random::<u64>()))
-        //         .collect()
-        // };
         let leave_matrix = RowMajorMatrix::new(leaves_bases, 80);
 
         // Benchmark Blake3 Merkle tree

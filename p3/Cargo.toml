@@ -8,7 +8,6 @@ name = "p3_demo"
 path = "src/main.rs"
 
 [dependencies]
-ark-std = { workspace = true }
 p3-air = { workspace = true }
 p3-goldilocks = { workspace = true }
 p3-challenger = { workspace = true }
@@ -25,9 +24,11 @@ p3-blake3 = { workspace = true }
 p3-symmetric = { workspace = true }
 p3-uni-stark = { workspace = true }
 p3-util = { workspace = true }
-rand = { workspace = true }
-rayon = "1.8"
+
+ark-std = { workspace = true }
+rayon= { workspace = true }
 tracing = { workspace = true }
-tracing-attributes = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-atty = "0.2"
+tracing-attributes= { workspace = true }
+tracing-subscriber = { workspace = true }
+atty = { workspace = true }
+rand = { workspace = true }

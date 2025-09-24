@@ -29,7 +29,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .with_ansi(atty::is(atty::Stream::Stdout))
         .with_max_level(tracing::Level::DEBUG)
-        // .compact()
         .init();
 
     println!("Sum Constraint STARK Proof Demo (Winterfell)");
@@ -46,11 +45,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "blake256" => {
                     println!("Running with Blake3_256 hash function");
                     run_example_blake256(num_steps, *num_col)?;
-                },
+                }
                 "poseidon2" => {
                     println!("Running with Poseidon2 hash function");
                     run_example_poseidon2(num_steps, *num_col)?;
-                },
+                }
                 _ => {
                     println!("Running with Blake3_256 hash function");
                     run_example_blake256(num_steps, *num_col)?;
