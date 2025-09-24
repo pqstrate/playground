@@ -20,7 +20,7 @@
 # # P3 demos with blake3 hash function
 # ######################################
 # RUSTFLAGS="-C target-feature=+avx512f" NUM_THREADS=1 HASH_TYPE=blake3 cargo run --release --bin p3_demo > 1_thread_p3_blake3_avx512.log
-NUM_THREADS=1 HASH_TYPE=blake3 cargo run --release --bin p3_demo > 1_thread_p3_blake3.log
+# NUM_THREADS=1 HASH_TYPE=blake3 cargo run --release --bin p3_demo > 1_thread_p3_blake3.log
 
 # # RUSTFLAGS="-C target-feature=+avx512f" NUM_THREADS=2 HASH_TYPE=blake3 cargo run --release --bin p3_demo > 2_thread_p3_blake3_avx512.log
 # # NUM_THREADS=2 HASH_TYPE=blake3 cargo run --release --bin p3_demo > 2_thread_p3_blake3.log
@@ -32,7 +32,7 @@ NUM_THREADS=1 HASH_TYPE=blake3 cargo run --release --bin p3_demo > 1_thread_p3_b
 # # NUM_THREADS=8 HASH_TYPE=blake3 cargo run --release --bin p3_demo > 8_thread_p3_blake3.log
 
 # RUSTFLAGS="-C target-feature=+avx512f" NUM_THREADS=16 HASH_TYPE=blake3 cargo run --release --bin p3_demo > 16_thread_p3_blake3_avx512.log
-NUM_THREADS=16 HASH_TYPE=blake3 cargo run --release --bin p3_demo > 16_thread_p3_blake3.log
+# NUM_THREADS=16 HASH_TYPE=blake3 cargo run --release --bin p3_demo > 16_thread_p3_blake3.log
 
 # ######################################
 # # P3 demos with Keccak hash function
@@ -80,10 +80,10 @@ NUM_THREADS=1 HASH_TYPE=blake256 cargo run --release --bin wf_demo > 1_thread_wf
 NUM_THREADS=16 HASH_TYPE=blake256 cargo run --release --bin wf_demo > 16_thread_wf_blake256.log
 
 ######################################
-# WF demos with RPO hash function (super slow)
+# WF demos with Poseidon2 hash function (slow)
 ######################################
-# NUM_THREADS=16 HASH_TYPE=rpo cargo run --release --bin wf_demo > 16_thread_wf_rpo.log
-# NUM_THREADS=8 HASH_TYPE=rpo cargo run --release --bin wf_demo > 8_thread_wf_rpo.log
-# NUM_THREADS=4 HASH_TYPE=rpo cargo run --release --bin wf_demo > 4_thread_wf_rpo.log
-# NUM_THREADS=2 HASH_TYPE=rpo cargo run --release --bin wf_demo > 2_thread_wf_rpo.log
-# NUM_THREADS=1 HASH_TYPE=rpo cargo run --release --bin wf_demo > 1_thread_wf_rpo.log
+NUM_THREADS=1 HASH_TYPE=poseidon2 cargo run --release --bin wf_demo > 1_thread_wf_poseidon2.log
+# NUM_THREADS=2 HASH_TYPE=poseidon2 cargo run --release --bin wf_demo > 2_thread_wf_poseidon2.log
+# NUM_THREADS=4 HASH_TYPE=poseidon2 cargo run --release --bin wf_demo > 4_thread_wf_poseidon2.log
+# NUM_THREADS=8 HASH_TYPE=poseidon2 cargo run --release --bin wf_demo > 8_thread_wf_poseidon2.log
+NUM_THREADS=16 HASH_TYPE=poseidon2 cargo run --release --bin wf_demo > 16_thread_wf_poseidon2.log

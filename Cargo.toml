@@ -32,6 +32,7 @@ miden-processor = { version = "0.18", default-features = false }
 miden-assembly = { version = "0.18", default-features = false }
 miden-prover = { version = "0.18", default-features = false }
 miden-verifier = { version = "0.18", default-features = false }
+miden-crypto = { version = "0.17", default-features = false}
 
 # Plonky3 dependencies - using crates.io versions with parallel features where available
 p3-air = "0.3.0"

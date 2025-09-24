@@ -1,10 +1,8 @@
 use ark_std::{end_timer, rand::RngCore, start_timer, test_rng};
-use core_utils::{ByteReader, ByteWriter, Deserializable, DeserializationError, Serializable};
-use miden_crypto::hash::rpo::Rpo256;
 use std::marker::PhantomData;
 use winterfell::{
-    crypto::{DefaultRandomCoin, Digest, ElementHasher, Hasher, MerkleTree},
-    math::{fields::f128::BaseElement, FieldElement, StarkField},
+    crypto::{DefaultRandomCoin, ElementHasher, MerkleTree},
+    math::{fields::f64::BaseElement, FieldElement},
     matrix::ColMatrix,
     Air, AirContext, Assertion, AuxRandElements, BatchingMethod, CompositionPoly,
     CompositionPolyTrace, ConstraintCompositionCoefficients, DefaultConstraintCommitment,
@@ -12,100 +10,6 @@ use winterfell::{
     ProofOptions, Prover, StarkDomain, Trace, TraceInfo, TracePolyTable, TraceTable,
     TransitionConstraintDegree,
 };
-
-// TRACE_WIDTH is now dynamic based on num_col
-
-// RPO Adapter for Winterfell
-#[derive(Debug, PartialEq, Eq)]
-pub struct RpoWinterfell(PhantomData<BaseElement>);
-
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Default)]
-pub struct RpoDigest([u8; 32]);
-
-impl Digest for RpoDigest {
-    fn as_bytes(&self) -> [u8; 32] {
-        self.0
-    }
-}
-
-impl Serializable for RpoDigest {
-    fn write_into<W: ByteWriter>(&self, target: &mut W) {
-        target.write_bytes(&self.0);
-    }
-}
-
-impl Deserializable for RpoDigest {
-    fn read_from<R: ByteReader>(source: &mut R) -> Result<Self, DeserializationError> {
-        let bytes = source.read_array::<32>()?;
-        Ok(RpoDigest(bytes))
-    }
-}
-
-impl Hasher for RpoWinterfell {
-    type Digest = RpoDigest;
-
-    const COLLISION_RESISTANCE: u32 = 128;
-
-    fn hash(bytes: &[u8]) -> Self::Digest {
-        let digest = Rpo256::hash(bytes);
-        let mut bytes = [0u8; 32];
-        bytes.copy_from_slice(&digest.as_bytes());
-        RpoDigest(bytes)
-    }
-
-    fn merge(values: &[Self::Digest; 2]) -> Self::Digest {
-        let mut combined = [0u8; 64];
-        combined[..32].copy_from_slice(&values[0].0);
-        combined[32..].copy_from_slice(&values[1].0);
-        let digest = Rpo256::hash(&combined);
-        let mut bytes = [0u8; 32];
-        bytes.copy_from_slice(&digest.as_bytes());
-        RpoDigest(bytes)
-    }
-
-    fn merge_many(values: &[Self::Digest]) -> Self::Digest {
-        let mut combined = Vec::new();
-        for value in values {
-            combined.extend_from_slice(&value.0);
-        }
-        let digest = Rpo256::hash(&combined);
-        let mut bytes = [0u8; 32];
-        bytes.copy_from_slice(&digest.as_bytes());
-        RpoDigest(bytes)
-    }
-
-    fn merge_with_int(seed: Self::Digest, value: u64) -> Self::Digest {
-        let mut combined = [0u8; 40];
-        combined[..32].copy_from_slice(&seed.0);
-        combined[32..].copy_from_slice(&value.to_le_bytes());
-        let digest = Rpo256::hash(&combined);
-        let mut bytes = [0u8; 32];
-        bytes.copy_from_slice(&digest.as_bytes());
-        RpoDigest(bytes)
-    }
-}
-
-impl ElementHasher for RpoWinterfell {
-    type BaseField = BaseElement;
-
-    fn hash_elements<E>(elements: &[E]) -> Self::Digest
-    where
-        E: FieldElement<BaseField = Self::BaseField>,
-    {
-        // Convert the elements into a list of base field elements
-        let base_elements = E::slice_as_base_elements(elements);
-
-        let mut bytes = Vec::new();
-        for element in base_elements {
-            bytes.extend_from_slice(&element.as_int().to_le_bytes());
-        }
-        let digest = Rpo256::hash(&bytes);
-        let mut result = [0u8; 32];
-        result.copy_from_slice(&digest.as_bytes());
-        RpoDigest(result)
-    }
-}
-
 pub struct FibLikeAir {
     context: AirContext<BaseElement>,
     result: BaseElement,
@@ -175,7 +79,7 @@ impl Air for FibLikeAir {
         // by computing what the constraint should produce
         let mut rng = test_rng();
         let first_row_values = (0..self.num_col)
-            .map(|_| BaseElement::new(rng.next_u64() as u128))
+            .map(|_| BaseElement::new(rng.next_u64()))
             .collect::<Vec<_>>();
 
         // Compute what the last column should be
@@ -199,7 +103,10 @@ pub struct FibLikeProver<H: ElementHasher> {
     _hasher: PhantomData<H>,
 }
 
-impl<H: ElementHasher> FibLikeProver<H> {
+impl<H> FibLikeProver<H>
+where
+    H: ElementHasher<BaseField = BaseElement>,
+{
     pub fn new(options: ProofOptions) -> Self {
         Self {
             options,
@@ -219,7 +126,7 @@ impl<H: ElementHasher> FibLikeProver<H> {
         // Initialize first row with random values but use a fixed seed for predictable assertions
         let mut rng = test_rng();
         let mut current_row = (0..num_col)
-            .map(|_| BaseElement::new(rng.next_u64() as u128))
+            .map(|_| BaseElement::new(rng.next_u64()))
             .collect::<Vec<_>>();
 
         // Compute x_num_col = x_1^8 + x_2 + ... + x_{num_col-1}
@@ -333,6 +240,20 @@ pub fn run_example_blake256(
     num_steps: usize,
     num_col: usize,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    run_example::<winterfell::crypto::hashers::Blake3_256<BaseElement>>(num_steps, num_col)
+}
+
+pub fn run_example_poseidon2(
+    num_steps: usize,
+    num_col: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
+    run_example::<miden_crypto::hash::poseidon2::Poseidon2>(num_steps, num_col)
+}
+
+pub fn run_example<H>(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>>
+where
+    H: ElementHasher<BaseField = BaseElement> + Sync,
+{
     println!(
         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Blake3_256",
         num_col - 1,
@@ -351,8 +272,7 @@ pub fn run_example_blake256(
         BatchingMethod::Linear,
     );
 
-    let prover =
-        FibLikeProver::<winterfell::crypto::hashers::Blake3_256<BaseElement>>::new(options);
+    let prover = FibLikeProver::<H>::new(options);
 
     let trace = prover.build_trace(num_steps, num_col);
     let pub_inputs = prover.get_pub_inputs(&trace);
@@ -371,103 +291,6 @@ pub fn run_example_blake256(
         winterfell::crypto::hashers::Blake3_256<BaseElement>,
         DefaultRandomCoin<winterfell::crypto::hashers::Blake3_256<BaseElement>>,
         MerkleTree<winterfell::crypto::hashers::Blake3_256<BaseElement>>,
-    >(proof, pub_inputs, &acceptable_options)
-    {
-        Ok(()) => println!("Proof verified successfully!"),
-        Err(e) => println!("Proof verification failed: {:?}", e),
-    }
-
-    Ok(())
-}
-
-// pub fn run_example_blake192(
-//     num_steps: usize,
-//     num_col: usize,
-// ) -> Result<(), Box<dyn std::error::Error>> {
-//     println!(
-//         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Blake3_192",
-//         num_col - 1,
-//         num_col,
-//         num_steps
-//     );
-
-//     let options = ProofOptions::new(
-//         28,
-//         8,
-//         0,
-//         FieldExtension::None,
-//         4,
-//         31,
-//         BatchingMethod::Linear,
-//         BatchingMethod::Linear,
-//     );
-
-//     let prover =
-//         FibLikeProver::<winterfell::crypto::hashers::Blake3_192<BaseElement>>::new(options);
-
-//     let trace = prover.build_trace(num_steps, num_col);
-//     let pub_inputs = prover.get_pub_inputs(&trace);
-
-//     println!("Trace size: {}x{}", trace.length(), trace.width());
-//     let timer = start_timer!(|| format!("proving {} steps", num_steps));
-//     let proof = prover.prove(trace)?;
-//     end_timer!(timer);
-//     println!("Proof generated successfully!");
-
-//     let acceptable_options =
-//         winterfell::AcceptableOptions::OptionSet(vec![proof.options().clone()]);
-
-//     match winterfell::verify::<
-//         FibLikeAir,
-//         winterfell::crypto::hashers::Blake3_192<BaseElement>,
-//         DefaultRandomCoin<winterfell::crypto::hashers::Blake3_192<BaseElement>>,
-//         MerkleTree<winterfell::crypto::hashers::Blake3_192<BaseElement>>,
-//     >(proof, pub_inputs, &acceptable_options)
-//     {
-//         Ok(()) => println!("Proof verified successfully!"),
-//         Err(e) => println!("Proof verification failed: {:?}", e),
-//     }
-
-//     Ok(())
-// }
-pub fn run_example_rpo(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
-    println!(
-        "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using RPO",
-        num_col - 1,
-        num_col,
-        num_steps
-    );
-
-    let options = ProofOptions::new(
-        28,
-        8,
-        0,
-        FieldExtension::None,
-        4,
-        31,
-        BatchingMethod::Linear,
-        BatchingMethod::Linear,
-    );
-
-    let prover = FibLikeProver::<RpoWinterfell>::new(options);
-
-    let trace = prover.build_trace(num_steps, num_col);
-    let pub_inputs = prover.get_pub_inputs(&trace);
-
-    println!("Trace size: {}x{}", trace.length(), trace.width());
-    let timer = start_timer!(|| format!("proving {} steps", num_steps));
-    let proof = prover.prove(trace)?;
-    end_timer!(timer);
-    println!("Proof generated successfully!");
-
-    let acceptable_options =
-        winterfell::AcceptableOptions::OptionSet(vec![proof.options().clone()]);
-
-    match winterfell::verify::<
-        FibLikeAir,
-        RpoWinterfell,
-        DefaultRandomCoin<RpoWinterfell>,
-        MerkleTree<RpoWinterfell>,
     >(proof, pub_inputs, &acceptable_options)
     {
         Ok(()) => println!("Proof verified successfully!"),

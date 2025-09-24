@@ -1,5 +1,5 @@
 use std::env;
-use wf::{run_example_blake256, run_example_rpo};
+use wf::{run_example_blake256, run_example_poseidon2};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Get number of threads from environment or use default
@@ -46,11 +46,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "blake256" => {
                     println!("Running with Blake3_256 hash function");
                     run_example_blake256(num_steps, *num_col)?;
-                }
-                "rpo" => {
-                    println!("Running with RPO hash function");
-                    run_example_rpo(num_steps, *num_col)?;
-                }
+                },
+                "poseidon2" => {
+                    println!("Running with Poseidon2 hash function");
+                    run_example_poseidon2(num_steps, *num_col)?;
+                },
                 _ => {
                     println!("Running with Blake3_256 hash function");
                     run_example_blake256(num_steps, *num_col)?;

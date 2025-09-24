@@ -189,7 +189,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         conversion_time.as_millis()
     );
     println!("   • Zero padding: {} rows added", stats.padding_rows);
-    
+
     Ok(())
 }
 
