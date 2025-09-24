@@ -626,6 +626,41 @@ dependencies = [
 ]
 
 [[package]]
+name = "fib-zkvm"
+version = "0.1.0"
+dependencies = [
+ "ark-std",
+ "atty",
+ "miden-assembly",
+ "miden-processor",
+ "miden-prover",
+ "miden-verifier",
+ "miden-vm",
+ "p3-air",
+ "p3-blake3",
+ "p3-challenger",
+ "p3-commit",
+ "p3-dft",
+ "p3-field",
+ "p3-fri",
+ "p3-goldilocks",
+ "p3-interpolation",
+ "p3-keccak",
+ "p3-matrix",
+ "p3-merkle-tree",
+ "p3-poseidon2",
+ "p3-symmetric",
+ "p3-trace-convertor",
+ "p3-uni-stark",
+ "p3-util",
+ "rand 0.9.2",
+ "rayon",
+ "tracing",
+ "tracing-subscriber",
+ "winter-prover",
+]
+
+[[package]]
 name = "find-msvc-tools"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1640,41 +1675,6 @@ dependencies = [
  "p3-maybe-rayon",
  "p3-util",
  "tracing",
-]
-
-[[package]]
-name = "p3-fib"
-version = "0.1.0"
-dependencies = [
- "ark-std",
- "atty",
- "miden-assembly",
- "miden-processor",
- "miden-prover",
- "miden-verifier",
- "miden-vm",
- "p3-air",
- "p3-blake3",
- "p3-challenger",
- "p3-commit",
- "p3-dft",
- "p3-field",
- "p3-fri",
- "p3-goldilocks",
- "p3-interpolation",
- "p3-keccak",
- "p3-matrix",
- "p3-merkle-tree",
- "p3-poseidon2",
- "p3-symmetric",
- "p3-trace-convertor",
- "p3-uni-stark",
- "p3-util",
- "rand 0.9.2",
- "rayon",
- "tracing",
- "tracing-subscriber",
- "winter-prover",
 ]
 
 [[package]]

@@ -69,3 +69,4 @@ p3-util = { version = "0.3.0", features = ["parallel"] }
 
 p3-goldilocks-monty = { path = "goldilocks-monty" }
 p3-monty-64 = { path = "monty-64" }
+p3-trace-convertor = { path = "trace-convertor" }

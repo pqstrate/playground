@@ -1,16 +1,16 @@
 # Playground Demos
 
-## Running Demos in Single Thread
-
-### Winterfell Demo
-```bash
-cd wf
-RAYON_NUM_THREADS=1 cargo run --release
+## Run micro benchmarks
+```
+cargo run --release --bin micro-bench
 ```
 
-### P3 Demo  
-```bash
-cd p3
-RAYON_NUM_THREADS=1 cargo run --release
+## Run e2e proof generation benchmarks for Plonky3 and Winterfell
+```
+./bench.sh
 ```
 
+## Run proof generation for zkVM with MidenVM and Plonky3
+```
+cargo run --release --example demo
+```

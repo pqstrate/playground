@@ -28,9 +28,6 @@ p3-util = { workspace = true }
 winterfell = { workspace = true }
 core-utils = { workspace = true }
 
-# # Other dependencies
-# rand = { workspace = true }
-# getrandom = { workspace = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 
