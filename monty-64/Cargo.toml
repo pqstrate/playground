@@ -1,0 +1,13 @@
+[package]
+name = "p3-monty-64"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+p3-field.workspace = true
+p3-util.workspace = true
+
+num-bigint.workspace = true
+paste.workspace = true
+rand.workspace = true
+serde = { workspace = true, features = ["derive"] }

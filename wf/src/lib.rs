@@ -272,7 +272,7 @@ where
         0,
         FieldExtension::None,
         2,
-        31,
+        1,
         BatchingMethod::Linear,
         BatchingMethod::Linear,
     );

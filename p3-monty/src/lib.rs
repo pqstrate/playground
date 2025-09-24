@@ -308,7 +308,7 @@ mod tests {
         let x1 = trace.get(0, 0).unwrap();
         let x2 = trace.get(0, 1).unwrap();
         let x3 = trace.get(0, 2).unwrap();
-        let expected_x3 = x1.exp_u64(8) + x2;
+        let expected_x3 = x1.exp(8) + x2;
         assert_eq!(x3, expected_x3);
 
         // Verify transition: x1[1] = x3[0]

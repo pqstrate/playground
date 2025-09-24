@@ -2,6 +2,9 @@
 members = [
     "p3", 
     "wf",
+    "monty-64",
+    "p3-monty",
+    "goldilocks-monty",
     "p3-fib",
     "trace-convertor",
     "micro-bench",
@@ -14,16 +17,17 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 atty = "0.2"
 
 ark-std = { version = "0.5.0", default-features = false, features = [ "print-trace" ] }
-rand = { version = "0.9", features = ["small_rng"] }
-# getrandom = { version = "0.2", features = ["js"] }
-criterion = "0.5"
-
+rand = { version = "0.9.0", default-features = false, features = ["small_rng"] }
+criterion = "0.6"
+num-bigint = { version = "0.4.3", default-features = false }
+paste = "1.0.15"
 
 # winterfell dependencies - using crates.io versions
 winterfell = { version = "0.13.0", default-features = false }
 winter-prover = { version = "0.13", default-features = false  }
 core-utils = { version = "0.13", package = "winter-utils", default-features = false }
 tracing = { version = "0.1", default-features = false }
+serde = { version = "1.0", default-features = false }
 
 # miden-vm dependencies
 miden-core = { version = "0.18", default-features = false }
@@ -39,6 +43,8 @@ p3-air = "0.3.0"
 p3-goldilocks = "0.3.0"
 p3-challenger = "0.3.0"
 p3-commit = "0.3.0"
+p3-mds = "0.3.0"
+p3-field-testing = "0.3.0"
 p3-dft = { version = "0.3.0", features = ["parallel"] }
 p3-field = "0.3.0"
 p3-fri = "0.3.0"
