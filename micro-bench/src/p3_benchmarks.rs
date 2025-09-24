@@ -49,7 +49,7 @@ pub fn run_lde_bench() {
     let poly: Vec<F> = (0..POLY_SIZE)
         .map(|i| F::from_u64((1u64 << 55) + (i as u64)))
         .collect();
-    
+
     // #[cfg(not(target_arch = "wasm32"))]
     // let poly: Vec<F> = {
     //     let mut rng = StdRng::seed_from_u64(42);
@@ -80,7 +80,7 @@ pub fn run_merkle_bench() {
     let leaves_bases: Vec<F> = (0..POLY_SIZE)
         .map(|i| F::from_u64((1u64 << 55) + (i as u64)))
         .collect();
-    
+
     // #[cfg(not(target_arch = "wasm32"))]
     // let leaves_bases: Vec<F> = {
     //     let mut rng = StdRng::seed_from_u64(42);
@@ -110,7 +110,7 @@ pub fn run_merkle_bench() {
         let leaves_bases: Vec<F> = (0..POLY_SIZE * 80)
             .map(|i| F::from_u64((1u64 << 55) + (i as u64)))
             .collect();
-        
+
         // #[cfg(not(target_arch = "wasm32"))]
         // let leaves_bases: Vec<F> = {
         //     let mut rng = StdRng::seed_from_u64(42);

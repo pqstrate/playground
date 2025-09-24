@@ -2,22 +2,36 @@
 members = [
     "p3", 
     "wf",
+    "p3-fib",
+    "trace-convertor",
     "micro-bench",
-    # "p3-monty"
 ]
 
 [workspace.dependencies]
-ark-std = { version = "0.5.0", features = [ "print-trace" ] }
-# ark-std = "0.5.0"
+rayon = "1.8"
+tracing-attributes = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+atty = "0.2"
+
+ark-std = { version = "0.5.0", default-features = false, features = [ "print-trace" ] }
 rand = { version = "0.9", features = ["small_rng"] }
-getrandom = { version = "0.2", features = ["js"] }
+# getrandom = { version = "0.2", features = ["js"] }
 criterion = "0.5"
 
 
 # winterfell dependencies - using crates.io versions
-winterfell = { version = "0.13.0", default-features = false, features = ["std", "concurrent"] }
-core-utils = { version = "0.13", package = "winter-utils", default-features = false, features = ["std"] }
-tracing = { version = "0.1", default-features = false, features = ["std"] }
+winterfell = { version = "0.13.0", default-features = false }
+winter-prover = { version = "0.13", default-features = false  }
+core-utils = { version = "0.13", package = "winter-utils", default-features = false }
+tracing = { version = "0.1", default-features = false }
+
+# miden-vm dependencies
+miden-core = { version = "0.18", default-features = false }
+miden-vm = { version = "0.18", default-features = false }
+miden-processor = { version = "0.18", default-features = false }
+miden-assembly = { version = "0.18", default-features = false }
+miden-prover = { version = "0.18", default-features = false }
+miden-verifier = { version = "0.18", default-features = false }
 
 # Plonky3 dependencies - using crates.io versions with parallel features where available
 p3-air = "0.3.0"
@@ -37,25 +51,25 @@ p3-symmetric = "0.3.0"
 p3-uni-stark = { version = "0.3.0", features = ["parallel"] }
 p3-util = { version = "0.3.0", features = ["parallel"] }
 
-# local patches that is more verbose 
-[patch.crates-io]
-winterfell = { path = "../winterfell/winterfell" }
-winter-utils = { path = "../winterfell/utils/core" }
+# # local patches that is more verbose 
+# [patch.crates-io]
+# winterfell = { path = "../winterfell/winterfell" }
+# winter-utils = { path = "../winterfell/utils/core" }
 
-# Plonky3 local patches with parallel features where available
-p3-air = { path = "../Plonky3/air" }
-p3-goldilocks = { path = "../Plonky3/goldilocks" }
-p3-challenger = { path = "../Plonky3/challenger" }
-p3-commit = { path = "../Plonky3/commit" }
-p3-dft = { path = "../Plonky3/dft", features = ["parallel"] }
-p3-field = { path = "../Plonky3/field" }
-p3-fri = { path = "../Plonky3/fri" }
-p3-interpolation = { path = "../Plonky3/interpolation" }
-p3-keccak = { path = "../Plonky3/keccak" }
-p3-matrix = { path = "../Plonky3/matrix" }
-p3-merkle-tree = { path = "../Plonky3/merkle-tree" }
-p3-poseidon2 = { path = "../Plonky3/poseidon2" }
-p3-blake3 = { path = "../Plonky3/blake3" }
-p3-symmetric = { path = "../Plonky3/symmetric" }
-p3-uni-stark = { path = "../Plonky3/uni-stark", features = ["parallel"] }
-p3-util = { path = "../Plonky3/util", features = ["parallel"] }
+# # Plonky3 local patches with parallel features where available
+# p3-air = { path = "../Plonky3/air" }
+# p3-goldilocks = { path = "../Plonky3/goldilocks" }
+# p3-challenger = { path = "../Plonky3/challenger" }
+# p3-commit = { path = "../Plonky3/commit" }
+# p3-dft = { path = "../Plonky3/dft", features = ["parallel"] }
+# p3-field = { path = "../Plonky3/field" }
+# p3-fri = { path = "../Plonky3/fri" }
+# p3-interpolation = { path = "../Plonky3/interpolation" }
+# p3-keccak = { path = "../Plonky3/keccak" }
+# p3-matrix = { path = "../Plonky3/matrix" }
+# p3-merkle-tree = { path = "../Plonky3/merkle-tree" }
+# p3-poseidon2 = { path = "../Plonky3/poseidon2" }
+# p3-blake3 = { path = "../Plonky3/blake3" }
+# p3-symmetric = { path = "../Plonky3/symmetric" }
+# p3-uni-stark = { path = "../Plonky3/uni-stark", features = ["parallel"] }
+# p3-util = { path = "../Plonky3/util", features = ["parallel"] }

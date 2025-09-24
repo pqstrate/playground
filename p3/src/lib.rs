@@ -18,31 +18,6 @@ use rand::{rngs::SmallRng, RngCore, SeedableRng};
 use std::time::{Duration, Instant};
 use tracing::{debug, info, info_span, instrument};
 
-#[derive(Debug, Clone)]
-struct DetailedBenchmark {
-    setup_time: Duration,
-    proof_generation_time: Duration,
-    verification_time: Duration,
-    total_time: Duration,
-}
-
-impl DetailedBenchmark {
-    fn new() -> Self {
-        Self {
-            setup_time: Duration::ZERO,
-            proof_generation_time: Duration::ZERO,
-            verification_time: Duration::ZERO,
-            total_time: Duration::ZERO,
-        }
-    }
-
-    fn format_detailed_report(&self, hash_type: &str, num_steps: usize, num_col: usize) -> String {
-        "".to_string()
-    }
-}
-
-// TRACE_WIDTH is now dynamic based on num_col
-
 type Val = Goldilocks;
 type Challenge = BinomialExtensionField<Val, 2>;
 
@@ -218,7 +193,6 @@ pub fn run_example_keccak(
     );
 
     let total_start = Instant::now();
-    let mut benchmarks = DetailedBenchmark::new();
 
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
@@ -250,26 +224,15 @@ pub fn run_example_keccak(
         final_result,
         num_col,
     };
-    benchmarks.setup_time = setup_start.elapsed();
-
     info!("Starting proof generation");
     let prove_start = Instant::now();
     let proof = info_span!("prove", num_steps = num_steps)
         .in_scope(|| prove(&config, &air, trace, &vec![]));
-    benchmarks.proof_generation_time = prove_start.elapsed();
     info!("Proof generated successfully!");
 
     let verify_start = Instant::now();
     match verify(&config, &air, &proof, &vec![]) {
         Ok(()) => {
-            benchmarks.verification_time = verify_start.elapsed();
-            benchmarks.total_time = total_start.elapsed();
-
-            println!(
-                "{}",
-                benchmarks.format_detailed_report("Keccak", num_steps, num_col)
-            );
-
             info!("Proof verified successfully!");
             Ok(())
         }
@@ -293,8 +256,6 @@ pub fn run_example_poseidon2(
     );
 
     let total_start = Instant::now();
-    let mut benchmarks = DetailedBenchmark::new();
-
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
@@ -325,26 +286,16 @@ pub fn run_example_poseidon2(
         final_result,
         num_col,
     };
-    benchmarks.setup_time = setup_start.elapsed();
 
     info!("Starting proof generation");
     let prove_start = Instant::now();
     let proof = info_span!("prove", num_steps = num_steps)
         .in_scope(|| prove(&config, &air, trace, &vec![]));
-    benchmarks.proof_generation_time = prove_start.elapsed();
     info!("Proof generated successfully!");
 
     let verify_start = Instant::now();
     match verify(&config, &air, &proof, &vec![]) {
         Ok(()) => {
-            benchmarks.verification_time = verify_start.elapsed();
-            benchmarks.total_time = total_start.elapsed();
-
-            println!(
-                "{}",
-                benchmarks.format_detailed_report("Poseidon2", num_steps, num_col)
-            );
-
             info!("Proof verified successfully!");
             Ok(())
         }
@@ -368,8 +319,6 @@ pub fn run_example_blake3(
     );
 
     let total_start = Instant::now();
-    let mut benchmarks = DetailedBenchmark::new();
-
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
@@ -400,26 +349,14 @@ pub fn run_example_blake3(
         final_result,
         num_col,
     };
-    benchmarks.setup_time = setup_start.elapsed();
 
     info!("Starting proof generation");
-    let prove_start = Instant::now();
     let proof = info_span!("prove", num_steps = num_steps)
         .in_scope(|| prove(&config, &air, trace, &vec![]));
-    benchmarks.proof_generation_time = prove_start.elapsed();
     info!("Proof generated successfully!");
 
-    let verify_start = Instant::now();
     match verify(&config, &air, &proof, &vec![]) {
         Ok(()) => {
-            benchmarks.verification_time = verify_start.elapsed();
-            benchmarks.total_time = total_start.elapsed();
-
-            println!(
-                "{}",
-                benchmarks.format_detailed_report("Blake3", num_steps, num_col)
-            );
-
             info!("Proof verified successfully!");
             Ok(())
         }

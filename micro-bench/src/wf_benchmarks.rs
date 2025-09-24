@@ -1,7 +1,9 @@
 // use rand::rngs::StdRng;
 // use rand::{Rng, SeedableRng};
-use std::time::Instant;
+use std::{mem::transmute, time::Instant};
 
+use core_utils::Serializable;
+use rayon::{iter::ParallelIterator, slice::ParallelSlice};
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
@@ -40,7 +42,7 @@ pub fn run_lde_bench() {
     let mut poly: Vec<BaseElement> = (0..POLY_SIZE)
         .map(|i| BaseElement::new((1u64 << 55) + (i as u64)))
         .collect();
-    
+
     // #[cfg(not(target_arch = "wasm32"))]
     // let mut poly: Vec<BaseElement> = {
     //     let mut rng = StdRng::seed_from_u64(42);
@@ -80,7 +82,7 @@ pub fn run_merkle_bench() {
                 Blake3_256::<BaseElement>::hash(&full_bytes)
             })
             .collect();
-        
+
         // #[cfg(not(target_arch = "wasm32"))]
         // let leaves: Vec<_> = {
         //     let mut rng = StdRng::seed_from_u64(42);
@@ -92,6 +94,30 @@ pub fn run_merkle_bench() {
         //         .collect()
         // };
 
+        let start = Instant::now();
+        let _tree = MerkleTree::<Blake3_256<BaseElement>>::new(leaves).unwrap();
+        let blake3_commit_time = start.elapsed();
+        console_log!("WF Blake3_256 Merkle commit time: {:?}", blake3_commit_time);
+    }
+
+    {
+        let leaves_bases: Vec<_> = (0..POLY_SIZE * 80)
+            .map(|i| BaseElement::new((1u64 << 55) + (i as u64)))
+            .collect();
+
+        let start = Instant::now();
+        let leaves = leaves_bases
+            .par_chunks(80)
+            .map(|chunk| {
+                // let hash_input = chunk.iter().flat_map(|el| el.to_bytes()).collect::<Vec<_>>();
+                let hash_input = unsafe {
+                    transmute::<[BaseElement; 80], [u8; 80 * 8]>(chunk.to_vec().try_into().unwrap())
+                };
+                Blake3_256::<BaseElement>::hash(&hash_input)
+            })
+            .collect::<Vec<_>>();
+        let end = start.elapsed();
+        console_log!("WF Blake3_256 Merkle leaves hash time: {:?}", end);
         let start = Instant::now();
         let _tree = MerkleTree::<Blake3_256<BaseElement>>::new(leaves).unwrap();
         let blake3_commit_time = start.elapsed();
