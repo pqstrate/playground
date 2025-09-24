@@ -19,19 +19,18 @@
 use core::array;
 use std::hint::black_box;
 
-use criterion::{Criterion, criterion_group, criterion_main};
+use criterion::{criterion_group, criterion_main, Criterion};
 use p3_field::PrimeCharacteristicRing;
 // Import both Goldilocks implementations
 use p3_goldilocks::{
-    Goldilocks as GoldilocksStd, HL_GOLDILOCKS_8_EXTERNAL_ROUND_CONSTANTS as HL_STD_EXT_CONSTANTS,
+    Goldilocks as GoldilocksStd, Poseidon2GoldilocksHL as Poseidon2GoldilocksHLStd,
+    HL_GOLDILOCKS_8_EXTERNAL_ROUND_CONSTANTS as HL_STD_EXT_CONSTANTS,
     HL_GOLDILOCKS_8_INTERNAL_ROUND_CONSTANTS as HL_STD_INT_CONSTANTS,
-    Poseidon2GoldilocksHL as Poseidon2GoldilocksHLStd,
 };
 use p3_goldilocks_monty::{
-    Goldilocks as GoldilocksMonty,
+    Goldilocks as GoldilocksMonty, Poseidon2GoldilocksHL as Poseidon2GoldilocksHLMonty,
     HL_GOLDILOCKS_MONTY_8_EXTERNAL_ROUND_CONSTANTS as HL_MONTY_EXT_CONSTANTS,
     HL_GOLDILOCKS_MONTY_8_INTERNAL_ROUND_CONSTANTS as HL_MONTY_INT_CONSTANTS,
-    Poseidon2GoldilocksHL as Poseidon2GoldilocksHLMonty,
 };
 use p3_poseidon2::{ExternalLayerConstants, Poseidon2};
 use p3_symmetric::Permutation;

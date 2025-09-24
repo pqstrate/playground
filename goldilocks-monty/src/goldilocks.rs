@@ -13,8 +13,8 @@ use p3_field::{
     PrimeField64, RawDataSerializable, TwoAdicField,
 };
 use p3_monty_64::{MontyField64, MontyParameters64};
-use rand::Rng;
 use rand::distr::{Distribution, StandardUniform};
+use rand::Rng;
 use serde::{Deserialize, Deserializer, Serialize};
 
 /// The Goldilocks prime: 2^64 - 2^32 + 1

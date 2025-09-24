@@ -7,13 +7,13 @@ use core::mem::transmute;
 use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 use p3_field::exponentiation::exp_10540996611094048183;
-use p3_field::interleave::{interleave_u64, interleave_u128};
+use p3_field::interleave::{interleave_u128, interleave_u64};
 use p3_field::{
     Algebra, Field, InjectiveMonomial, PackedField, PackedFieldPow2, PackedValue,
     PermutationMonomial, PrimeCharacteristicRing,
 };
-use rand::Rng;
 use rand::distr::{Distribution, StandardUniform};
+use rand::Rng;
 
 use crate::Goldilocks;
 

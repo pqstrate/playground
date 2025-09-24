@@ -1,6 +1,6 @@
 use core::any::type_name;
 
-use criterion::{BatchSize, Criterion, criterion_group, criterion_main};
+use criterion::{criterion_group, criterion_main, BatchSize, Criterion};
 use p3_field::{Field, PrimeCharacteristicRing};
 use p3_field_testing::bench_func::{
     benchmark_add_latency, benchmark_add_throughput, benchmark_inv, benchmark_iter_sum,
@@ -63,8 +63,6 @@ fn bench_packedfield(c: &mut Criterion) {
     benchmark_mul_latency::<<F as Field>::Packing, L_REPS>(c, &name);
     benchmark_mul_throughput::<<F as Field>::Packing, REPS>(c, &name);
 }
-
-
 
 criterion_group!(goldilocks_monty_arithmetic, bench_field, bench_packedfield);
 criterion_main!(goldilocks_monty_arithmetic);

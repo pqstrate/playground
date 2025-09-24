@@ -1,7 +1,6 @@
-use rand::{RngCore, SeedableRng, rngs::SmallRng};
-use p3_blake3::Blake3;
 use p3_air::{Air, AirBuilder, BaseAir};
-use p3_challenger::{HashChallenger, SerializingChallenger64, DuplexChallenger};
+use p3_blake3::Blake3;
+use p3_challenger::{DuplexChallenger, HashChallenger, SerializingChallenger64};
 use p3_commit::ExtensionMmcs;
 use p3_dft::Radix2DitParallel;
 use p3_field::extension::BinomialExtensionField;
@@ -11,9 +10,12 @@ use p3_goldilocks_monty::{Goldilocks, Poseidon2Goldilocks};
 use p3_keccak::{Keccak256Hash, KeccakF};
 use p3_matrix::{dense::RowMajorMatrix, Matrix};
 use p3_merkle_tree::MerkleTreeMmcs;
-use p3_symmetric::{CompressionFunctionFromHasher, PaddingFreeSponge, SerializingHasher, TruncatedPermutation};
+use p3_symmetric::{
+    CompressionFunctionFromHasher, PaddingFreeSponge, SerializingHasher, TruncatedPermutation,
+};
 use p3_uni_stark::{prove, verify, StarkConfig};
-use tracing::{instrument, info, debug, info_span};
+use rand::{rngs::SmallRng, RngCore, SeedableRng};
+use tracing::{debug, info, info_span, instrument};
 
 // TRACE_WIDTH is now dynamic based on num_col
 
@@ -37,7 +39,7 @@ pub type KeccakChallenger = SerializingChallenger64<Val, HashChallenger<u8, Kecc
 pub type KeccakPcs = TwoAdicFriPcs<Val, Radix2DitParallel<Val>, KeccakValMmcs, KeccakChallengeMmcs>;
 pub type KeccakConfig = StarkConfig<KeccakPcs, Challenge, KeccakChallenger>;
 
-// Poseidon2-based type definitions  
+// Poseidon2-based type definitions
 pub type Poseidon2Perm = Poseidon2Goldilocks<16>;
 pub type Poseidon2Hash = PaddingFreeSponge<Poseidon2Perm, 16, 8, 8>;
 pub type Poseidon2Compress = TruncatedPermutation<Poseidon2Perm, 2, 8, 16>;
@@ -50,7 +52,8 @@ pub type Poseidon2ValMmcs = MerkleTreeMmcs<
 >;
 pub type Poseidon2ChallengeMmcs = ExtensionMmcs<Val, Challenge, Poseidon2ValMmcs>;
 pub type Poseidon2Challenger = DuplexChallenger<Val, Poseidon2Perm, 16, 8>;
-pub type Poseidon2Pcs = TwoAdicFriPcs<Val, Radix2DitParallel<Val>, Poseidon2ValMmcs, Poseidon2ChallengeMmcs>;
+pub type Poseidon2Pcs =
+    TwoAdicFriPcs<Val, Radix2DitParallel<Val>, Poseidon2ValMmcs, Poseidon2ChallengeMmcs>;
 pub type Poseidon2Config = StarkConfig<Poseidon2Pcs, Challenge, Poseidon2Challenger>;
 
 // Blake3-based type definitions (following merkle-tree benchmark pattern)
@@ -115,7 +118,10 @@ impl<AB: AirBuilder> Air<AB> for FibLikeAir {
 }
 
 pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>, Val) {
-    debug!("Starting trace generation: {} steps, {} columns", num_steps, num_col);
+    debug!(
+        "Starting trace generation: {} steps, {} columns",
+        num_steps, num_col
+    );
     let mut rng = SmallRng::seed_from_u64(123);
     assert!(num_steps.is_power_of_two());
     assert!(num_col >= 2, "num_col must be at least 2");
@@ -165,14 +171,21 @@ pub fn generate_trace(num_steps: usize, num_col: usize) -> (RowMajorMatrix<Val>,
 
     let final_result = values[values.len() - num_col]; // First element of last row
     let trace = RowMajorMatrix::new(values, num_col);
-    info!("Trace generated with {} rows, {} cols", trace.height(), trace.width());
+    info!(
+        "Trace generated with {} rows, {} cols",
+        trace.height(),
+        trace.width()
+    );
     debug!("Final result: {}", final_result);
 
     (trace, final_result)
 }
 
 #[instrument(level = "info", fields(num_steps, num_col, hash_type = "keccak"))]
-pub fn run_example_keccak(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_example_keccak(
+    num_steps: usize,
+    num_col: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
     info!(
         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Keccak (GoldilocksMonty simulation)",
         num_col - 1,
@@ -229,7 +242,10 @@ pub fn run_example_keccak(num_steps: usize, num_col: usize) -> Result<(), Box<dy
 }
 
 #[instrument(level = "info", fields(num_steps, num_col, hash_type = "poseidon2"))]
-pub fn run_example_poseidon2(num_steps: usize, num_col: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_example_poseidon2(
+    num_steps: usize,
+    num_col: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
     info!(
         "Generating proof for sum constraint (x1^8 + x2 + ... + x{} = x{}) with {} steps using Poseidon2 (GoldilocksMonty simulation)",
         num_col - 1,
@@ -240,12 +256,12 @@ pub fn run_example_poseidon2(num_steps: usize, num_col: usize) -> Result<(), Box
     let (trace, final_result) = generate_trace(num_steps, num_col);
     println!("Trace size: {}x{}", trace.height(), trace.width());
 
-    // Set up Poseidon2-based cryptography  
+    // Set up Poseidon2-based cryptography
     let mut rng = SmallRng::seed_from_u64(42);
     let perm = Poseidon2Perm::new_from_rng_128(&mut rng);
     let poseidon2_hash = Poseidon2Hash::new(perm.clone());
     let compress = Poseidon2Compress::new(perm.clone());
-    
+
     let val_mmcs = Poseidon2ValMmcs::new(poseidon2_hash, compress);
     let challenge_mmcs = Poseidon2ChallengeMmcs::new(val_mmcs.clone());
     let dft = Radix2DitParallel::<Val>::default();
@@ -284,7 +300,6 @@ pub fn run_example_poseidon2(num_steps: usize, num_col: usize) -> Result<(), Box
         }
     }
 }
-
 
 #[instrument(level = "info", fields(num_steps, num_col, hash_type = "blake3"))]
 pub fn run_example_blake3(

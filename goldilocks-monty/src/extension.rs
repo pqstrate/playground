@@ -1,12 +1,9 @@
 //! Extension field implementations for Goldilocks Montgomery field.
 
-use p3_field::extension::{
-    BinomiallyExtendable,  HasTwoAdicBinomialExtension,
-};
-use p3_field::{PrimeCharacteristicRing, TwoAdicField, field_to_array};
+use p3_field::extension::{BinomiallyExtendable, HasTwoAdicBinomialExtension};
+use p3_field::{field_to_array, PrimeCharacteristicRing, TwoAdicField};
 
 use crate::Goldilocks;
-
 
 impl BinomiallyExtendable<2> for Goldilocks {
     // Verifiable in Sage with
@@ -35,7 +32,6 @@ impl HasTwoAdicBinomialExtension<2> for Goldilocks {
         }
     }
 }
-
 
 impl BinomiallyExtendable<5> for Goldilocks {
     // Verifiable via:

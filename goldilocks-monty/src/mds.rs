@@ -6,12 +6,9 @@
 
 use p3_dft::{Radix2Bowers, TwoAdicSubgroupDft};
 use p3_field::{PrimeCharacteristicRing, PrimeField64, TwoAdicField};
-use p3_mds::MdsPermutation;
 use p3_mds::karatsuba_convolution::Convolve;
-use p3_mds::util::{
-    apply_circulant, apply_circulant_fft, 
-     first_row_to_first_col,
-};
+use p3_mds::util::{apply_circulant, apply_circulant_fft, first_row_to_first_col};
+use p3_mds::MdsPermutation;
 use p3_symmetric::Permutation;
 
 use crate::Goldilocks;
@@ -162,7 +159,6 @@ impl Permutation<[Goldilocks; 32]> for MdsMatrixGoldilocksMonty {
 }
 impl MdsPermutation<Goldilocks, 32> for MdsMatrixGoldilocksMonty {}
 
-
 // #[rustfmt::skip]
 // const MATRIX_CIRC_MDS_64_GOLDILOCKS_MONTY: [u64; 64] = [
 //     0x07FFFFFFFC000000, 0xFBFFFFFF04000001, 0x436DB6DB25B6DB6E, 0x4AAAAAAA5AAAAAAB,
@@ -269,7 +265,6 @@ impl Permutation<[Goldilocks; 68]> for MdsMatrixGoldilocksMonty {
 }
 impl MdsPermutation<Goldilocks, 68> for MdsMatrixGoldilocksMonty {}
 
-
 /// Given the first row `circ_matrix` of an NxN circulant matrix, say
 /// C, return the product `C*input`.
 ///
@@ -289,7 +284,6 @@ pub fn apply_circulant_with_field_elem<R: PrimeCharacteristicRing, const N: usiz
     output[N - 1] = R::dot_product(&mat, &input);
     output
 }
-
 
 /// Use the convolution theorem to calculate the product of the given
 /// circulant matrix and the given vector.

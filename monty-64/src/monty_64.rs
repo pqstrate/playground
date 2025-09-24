@@ -12,15 +12,15 @@ use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAss
 use num_bigint::BigUint;
 use p3_field::integers::QuotientMap;
 use p3_field::{
-    Field, Packable, PrimeCharacteristicRing, PrimeField, PrimeField64, RawDataSerializable,
-    impl_raw_serializable_primefield64,
+    impl_raw_serializable_primefield64, Field, Packable, PrimeCharacteristicRing, PrimeField,
+    PrimeField64, RawDataSerializable,
 };
 use p3_util::flatten_to_base;
-use rand::Rng;
 use rand::distr::{Distribution, StandardUniform};
+use rand::Rng;
 use serde::{Deserialize, Deserializer, Serialize};
 
-use crate::utils::{MontyParameters64, add, from_monty, mul, sub, to_monty};
+use crate::utils::{add, from_monty, mul, sub, to_monty, MontyParameters64};
 
 /// A 64-bit prime field element in Montgomery form.
 #[derive(Clone, Copy, Default, Eq, Hash, PartialEq)]

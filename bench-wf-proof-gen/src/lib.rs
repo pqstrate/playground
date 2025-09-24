@@ -291,13 +291,11 @@ where
     let acceptable_options =
         winterfell::AcceptableOptions::OptionSet(vec![proof.options().clone()]);
 
-    match winterfell::verify::<
-        FibLikeAir,
-        H,
-        DefaultRandomCoin<H>,
-        MerkleTree<H>,
-    >(proof, pub_inputs, &acceptable_options)
-    {
+    match winterfell::verify::<FibLikeAir, H, DefaultRandomCoin<H>, MerkleTree<H>>(
+        proof,
+        pub_inputs,
+        &acceptable_options,
+    ) {
         Ok(()) => println!("Proof verified successfully!"),
         Err(e) => println!("Proof verification failed: {:?}", e),
     }
