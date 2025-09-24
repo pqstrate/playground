@@ -66,8 +66,6 @@ pub fn run_merkle_bench() {
             })
             .collect();
 
-     
-
         let start = Instant::now();
         let _tree = MerkleTree::<Blake3_256<BaseElement>>::new(leaves).unwrap();
         let blake3_commit_time = start.elapsed();

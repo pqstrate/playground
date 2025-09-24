@@ -44,7 +44,6 @@ pub fn run_lde_bench() {
         .map(|i| F::from_u64((1u64 << 55) + (i as u64)))
         .collect();
 
-
     // Create DFT instance
     let dft = Radix2DitParallel::<F>::default();
 
@@ -84,7 +83,6 @@ pub fn run_merkle_bench() {
     }
 
     {
-        // #[cfg(target_arch = "wasm32")]
         let leaves_bases: Vec<F> = (0..POLY_SIZE * 80)
             .map(|i| F::from_u64((1u64 << 55) + (i as u64)))
             .collect();

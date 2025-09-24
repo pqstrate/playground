@@ -1,4 +1,3 @@
-#[cfg(not(target_arch = "wasm32"))]
 fn main() {
     use std::env;
 
@@ -39,9 +38,4 @@ fn main() {
     println!("\nstart wf benches");
     micro_bench::wf_benchmarks::run_lde_bench();
     micro_bench::wf_benchmarks::run_merkle_bench();
-}
-
-#[cfg(target_arch = "wasm32")]
-fn main() {
-    // WASM doesn't use main function, it uses exported functions
 }
