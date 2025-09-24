@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-p3-monty-64 = { path = "../monty-64" }
+p3-monty-64.workspace = true
 
 p3-field.workspace = true
 p3-dft.workspace = true

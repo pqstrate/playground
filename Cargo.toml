@@ -1,13 +1,22 @@
 [workspace]
 members = [
-    "p3", 
-    "wf",
+    # p3 components for goldilocks monty
     "monty-64",
-    "p3-monty",
     "goldilocks-monty",
-    "p3-fib",
+    # p3 components for trace convertor
     "trace-convertor",
+
+    # micro-bench for individual components
     "micro-bench",
+
+    # bench e2e proof generation
+    "bench-p3-proof-gen", 
+    "bench-wf-proof-gen",
+    "bench-p3-monty-proof-gen",
+
+    # bench e2e zkVM proof generation
+    "bench-p3-fib-zkvm-proof-gen",
+
 ]
 
 [workspace.dependencies]
@@ -58,25 +67,5 @@ p3-symmetric = "0.3.0"
 p3-uni-stark = { version = "0.3.0", features = ["parallel"] }
 p3-util = { version = "0.3.0", features = ["parallel"] }
 
-# # local patches that is more verbose 
-# [patch.crates-io]
-# winterfell = { path = "../winterfell/winterfell" }
-# winter-utils = { path = "../winterfell/utils/core" }
-
-# # Plonky3 local patches with parallel features where available
-# p3-air = { path = "../Plonky3/air" }
-# p3-goldilocks = { path = "../Plonky3/goldilocks" }
-# p3-challenger = { path = "../Plonky3/challenger" }
-# p3-commit = { path = "../Plonky3/commit" }
-# p3-dft = { path = "../Plonky3/dft", features = ["parallel"] }
-# p3-field = { path = "../Plonky3/field" }
-# p3-fri = { path = "../Plonky3/fri" }
-# p3-interpolation = { path = "../Plonky3/interpolation" }
-# p3-keccak = { path = "../Plonky3/keccak" }
-# p3-matrix = { path = "../Plonky3/matrix" }
-# p3-merkle-tree = { path = "../Plonky3/merkle-tree" }
-# p3-poseidon2 = { path = "../Plonky3/poseidon2" }
-# p3-blake3 = { path = "../Plonky3/blake3" }
-# p3-symmetric = { path = "../Plonky3/symmetric" }
-# p3-uni-stark = { path = "../Plonky3/uni-stark", features = ["parallel"] }
-# p3-util = { path = "../Plonky3/util", features = ["parallel"] }
+p3-goldilocks-monty = { path = "goldilocks-monty" }
+p3-monty-64 = { path = "monty-64" }

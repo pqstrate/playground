@@ -24,11 +24,11 @@ p3-symmetric = { workspace = true }
 p3-uni-stark = { workspace = true }
 p3-util = { workspace = true }
 rand = { workspace = true }
-rayon = "1.8"
+rayon =  { workspace = true }
 tracing = { workspace = true }
-tracing-attributes = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-atty = "0.2"
+tracing-attributes = { workspace = true }
+tracing-subscriber = { workspace = true }
+atty = { workspace = true }
 
 # Use goldilocks-monty from local path
-p3-goldilocks-monty = { path = "../../Plonky3/goldilocks-monty" }
+p3-goldilocks-monty = { workspace = true }
