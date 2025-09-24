@@ -1,5 +1,5 @@
 [package]
-name = "p3-fib"
+name = "fib-zkvm"
 version = "0.1.0"
 edition = "2021"
 
@@ -38,4 +38,4 @@ rayon.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 
-p3-trace-convertor = { path = "../trace-convertor" }
+p3-trace-convertor.workspace = true
