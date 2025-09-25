@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WASM P3 Proof Generation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+        }
+        input {
+            padding: 5px;
+            margin: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007cba;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background-color: #005a87;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #output {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .loading {
+            color: #007cba;
+        }
+    </style>
+</head>
+<body>
+    <h1>WASM P3 Proof Generation</h1>
+    <p>This demo runs the Blake3-based proof generation using P3 (Plonky3) in WebAssembly.</p>
+    
+    <div class="input-group">
+        <label for="num_steps">Number of Steps:</label>
+        <input type="number" id="num_steps" value="1024" min="1" max="1000000">
+    </div>
+    
+    <div class="input-group">
+        <label for="num_col">Number of Columns:</label>
+        <input type="number" id="num_col" value="8" min="2" max="100">
+    </div>
+    
+    <button id="run_btn" onclick="runProof()">Run Blake3 Proof Generation</button>
+    <button id="clear_btn" onclick="clearOutput()">Clear Output</button>
+    
+    <h3>Output:</h3>
+    <div id="output">Click "Run Blake3 Proof Generation" to start...</div>
+
+    <script type="module">
+        import init, { run_example_blake3_wasm } from './pkg/wasm_p3_proof_gen.js';
+        
+        let wasm = null;
+        let wasmFunctions = null;
+        
+        async function initWasm() {
+            try {
+                wasm = await init();
+                wasmFunctions = await import('./pkg/wasm_p3_proof_gen.js');
+                document.getElementById('output').textContent = 'WASM module loaded successfully. Ready to run proofs.';
+                document.getElementById('run_btn').disabled = false;
+            } catch (err) {
+                console.warn('WASM loading error (attempting to continue anyway):', err);
+                try {
+                    // Try to import the functions even if init failed
+                    wasmFunctions = await import('./pkg/wasm_p3_proof_gen.js');
+                    document.getElementById('output').textContent = 'Warning: WASM init failed but functions may still work. Attempting to continue anyway...';
+                } catch (importErr) {
+                    document.getElementById('output').textContent = 'Warning: WASM module completely failed to load. Cannot run proof generation.';
+                }
+                document.getElementById('run_btn').disabled = false; // Enable button anyway for testing
+            }
+        }
+        
+        window.runProof = async function() {
+            if (!wasmFunctions || !wasmFunctions.run_example_blake3_wasm) {
+                document.getElementById('output').textContent += '\nWASM functions not available. Cannot run proof generation.';
+                return;
+            }
+            
+            const numSteps = parseInt(document.getElementById('num_steps').value);
+            const numCol = parseInt(document.getElementById('num_col').value);
+            
+            if (numSteps < 1 || numCol < 2) {
+                document.getElementById('output').textContent = 'Invalid parameters: num_steps must be >= 1, num_col must be >= 2';
+                return;
+            }
+            
+            document.getElementById('run_btn').disabled = true;
+            document.getElementById('output').textContent = 'Starting proof generation...\n';
+            
+            try {
+                const start = performance.now();
+                wasmFunctions.run_example_blake3_wasm(numSteps, numCol);
+                const end = performance.now();
+                
+                document.getElementById('output').textContent += `\nProof generation completed in ${(end - start).toFixed(2)}ms`;
+            } catch (err) {
+                document.getElementById('output').textContent += `\nError during proof generation: ${err}`;
+                console.error('Proof generation error:', err);
+            } finally {
+                document.getElementById('run_btn').disabled = false;
+            }
+        }
+        
+        window.clearOutput = function() {
+            document.getElementById('output').textContent = 'Output cleared. Ready to run proofs.';
+        }
+        
+        // Override console.log to capture output from WASM
+        const originalLog = console.log;
+        console.log = function(...args) {
+            const output = document.getElementById('output');
+            if (output) {
+                output.textContent += args.join(' ') + '\n';
+                output.scrollTop = output.scrollHeight;
+            }
+            originalLog.apply(console, args);
+        };
+        
+        // Initialize WASM when page loads
+        document.getElementById('run_btn').disabled = true;
+        initWasm();
+    </script>
+</body>
+</html>

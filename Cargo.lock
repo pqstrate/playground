@@ -104,7 +104,6 @@ version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "246a225cc6131e9ee4f24619af0f19d67761fff15d7ccc22e42b80846e69449a"
 dependencies = [
- "colored",
  "num-traits",
  "rand 0.8.5",
 ]
@@ -348,16 +347,6 @@ name = "colorchoice"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b05b61dc5112cbb17e4b6cd61790d9845d13888356391624cbe7e41efeac1e75"
-
-[[package]]
-name = "colored"
-version = "2.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
-dependencies = [
- "lazy_static",
- "windows-sys 0.59.0",
-]
 
 [[package]]
 name = "const-oid"
@@ -2979,6 +2968,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bad67dc8b2a1a6e5448428adec4c3e84c43e561d8c9ee8a9e5aabeb193ec41d1"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "wasm-p3-proof-gen"
+version = "0.1.0"
+dependencies = [
+ "ark-std",
+ "js-sys",
+ "p3-air",
+ "p3-blake3",
+ "p3-challenger",
+ "p3-commit",
+ "p3-dft",
+ "p3-field",
+ "p3-fri",
+ "p3-goldilocks",
+ "p3-interpolation",
+ "p3-keccak",
+ "p3-matrix",
+ "p3-merkle-tree",
+ "p3-poseidon2",
+ "p3-symmetric",
+ "p3-uni-stark",
+ "p3-util",
+ "wasm-bindgen",
 ]
 
 [[package]]
